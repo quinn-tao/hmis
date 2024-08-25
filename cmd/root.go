@@ -20,7 +20,9 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path"
 
+	"github.com/quinn-tao/hmis/v1/internal/profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -53,14 +55,19 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".hmis" (without extension).
+		cfgDir, err := os.UserConfigDir()
+		cobra.CheckErr(err)
+
+        hmisDir := "hmis" 
+
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".hmis")
+        
+		viper.SetDefault("profile.dir", path.Join(cfgDir, hmisDir, "profile"))
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -69,4 +76,7 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
+    
+    profile.LoadProfile()
+
 }

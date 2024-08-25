@@ -1,12 +1,10 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/quinn-tao/hmis/v1/internal/profile"
 	"github.com/spf13/cobra"
 )
 
@@ -15,10 +13,11 @@ var profileCmd = &cobra.Command{
 	Use:   "profile",
 	Short: "Managing budgeting profiles",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("profile called")
+        profile.Dump()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(profileCmd)
 }
+

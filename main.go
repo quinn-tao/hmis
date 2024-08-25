@@ -16,7 +16,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 package main
 
-import "github.com/quinn-tao/hmis/cmd"
+import "github.com/quinn-tao/hmis/v1/cmd"
 
 func main() {
 	cmd.Execute()
