@@ -7,5 +7,5 @@ func ProfileDir() string {
 }
 
 func CurrentProfileName() string {
-    return "default"
+    return viper.GetString("profile.name")
 }

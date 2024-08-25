@@ -10,6 +10,7 @@ BLD = ./bld
 	go get -u github.com/spf13/viper@latest     # cfg parser 
 	go get -u github.com/jedib0t/go-pretty/v6   # pretty printer
 	go get github.com/jedib0t/go-pretty/v6/text@v6.5.9
+	go get -u gopkg.in/yaml.v3					# yaml parser
 
 .install-devdeps: .install-deps
 	@echo "Installing dev-dependencies ..."

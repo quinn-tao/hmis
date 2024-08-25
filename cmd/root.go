@@ -62,15 +62,19 @@ func initConfig() {
 		cobra.CheckErr(err)
 
         hmisDir := "hmis" 
-
+        
+        // Application config 
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".hmis")
         
+        // Application config default values
 		viper.SetDefault("profile.dir", path.Join(cfgDir, hmisDir, "profile"))
+		viper.SetDefault("profile.name", "default")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+    // read in environment variables that match
+	viper.AutomaticEnv() 
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
