@@ -27,6 +27,7 @@ var freqEnumMap = map[string]Frequency {
     "yy": FreqYearly,
 }
 
+// TODO: logic handling duplicate categories 
 type Category struct {
     Name string
     Recurr *Recurrence
@@ -37,6 +38,20 @@ type Recurrence struct {
     Freq Frequency
     Amount currency.Amount
     Date time.Time
+}
+
+// Recursively find catgory in category tree
+func (c *Category) FindCategoryRecursive(name string) (retc *Category, exists bool) {
+    if c.Name == name {
+        return c, true
+    }     
+    for _, subcategory := range c.Sub {
+        target, exists := subcategory.FindCategoryRecursive(name)
+        if exists {
+            return target, exists
+        }
+    }
+    return nil, false 
 }
 
 var indent = 0
