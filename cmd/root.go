@@ -82,5 +82,4 @@ func initConfig() {
 	}
     
     profile.LoadProfile()
-
 }
