@@ -10,7 +10,7 @@ import (
 
 // recordCmd represents the record command
 var recordCmd = &cobra.Command{
-	Use:   "rec [COMMAND] [OPTIONS]",
+	Use:   "rec [COMMAND]",
 	Short: "Managing expense records",
     TraverseChildren: true, 
 }
