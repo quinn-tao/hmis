@@ -22,6 +22,8 @@ import (
 	"os"
 	"path"
 
+	"github.com/quinn-tao/hmis/v1/config"
+	"github.com/quinn-tao/hmis/v1/internal/db"
 	"github.com/quinn-tao/hmis/v1/internal/profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -55,7 +57,7 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		home, err := os.UserHomeDir()
+		homeDir, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
 		cfgDir, err := os.UserConfigDir()
@@ -64,13 +66,14 @@ func initConfig() {
         hmisDir := "hmis" 
         
         // Application config 
-		viper.AddConfigPath(home)
+		viper.AddConfigPath(homeDir)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".hmis")
         
         // Application config default values
 		viper.SetDefault("profile.dir", path.Join(cfgDir, hmisDir, "profile"))
 		viper.SetDefault("profile.name", "default")
+        viper.SetDefault("storage_location", path.Join(cfgDir, hmisDir, "rec.db"))
 	}
 
     // read in environment variables that match
@@ -82,4 +85,8 @@ func initConfig() {
 	}
     
     profile.LoadProfile()
+
+    // TODO: only open db when necessary
+    db.PersistorInit(config.StorageLocation())
+    db.PersistorClose()
 }

@@ -9,3 +9,7 @@ func ProfileDir() string {
 func CurrentProfileName() string {
     return viper.GetString("profile.name")
 }
+
+func StorageLocation() string {
+    return viper.GetString("storage_location")
+}
