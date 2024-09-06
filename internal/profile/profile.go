@@ -66,6 +66,11 @@ func LoadProfile() error {
     return nil
 }
 
+// Find a category 
+func (p *Profile) FindCategory(name string) (c *Category, exists bool){
+    return p.Category.FindCategoryRecursive(name)
+}
+
 // List of field parsers. Each individually load a section of 
 // users's budgeting profile from generic map[interface{}]interface{}
 // NOTE: order of these parsers matters as some may depends on others. 

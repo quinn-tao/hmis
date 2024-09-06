@@ -11,6 +11,7 @@ BLD = ./bld
 	go get -u github.com/jedib0t/go-pretty/v6   # pretty printer
 	go get github.com/jedib0t/go-pretty/v6/text@v6.5.9
 	go get -u gopkg.in/yaml.v3					# yaml parser
+	go get -u github.com/mattn/go-sqlite3
 
 .install-devdeps: .install-deps
 	@echo "Installing dev-dependencies ..."
