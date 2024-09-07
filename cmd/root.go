@@ -22,8 +22,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/quinn-tao/hmis/v1/config"
-	"github.com/quinn-tao/hmis/v1/internal/db"
 	"github.com/quinn-tao/hmis/v1/internal/profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -86,7 +84,4 @@ func initConfig() {
     
     profile.LoadProfile()
 
-    // TODO: only open db when necessary
-    db.PersistorInit(config.StorageLocation())
-    db.PersistorClose()
 }

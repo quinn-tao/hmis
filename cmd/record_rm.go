@@ -3,6 +3,7 @@ package cmd
 import (
 	"strconv"
 
+	"github.com/quinn-tao/hmis/v1/internal/db"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/display"
 	"github.com/spf13/cobra"
@@ -22,6 +23,11 @@ func parseRecordRmArgs(cmd *cobra.Command, args []string) {
         display.Error("Error parsing amount")
     }
     debug.TraceF("cmd: rec/rm %v", recId)
+
+    err = db.RemoveRec(recId)    
+    if err != nil {
+        display.Error("Error removing rec")
+    }
 }
 
 func init() {

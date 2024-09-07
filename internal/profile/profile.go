@@ -67,8 +67,8 @@ func LoadProfile() error {
 }
 
 // Find a category 
-func (p *Profile) FindCategory(name string) (c *Category, exists bool){
-    return p.Category.FindCategoryRecursive(name)
+func FindCategory(name string) (c *Category, exists bool){
+    return currProfile.Category.FindCategoryRecursive(name)
 }
 
 // List of field parsers. Each individually load a section of 
