@@ -22,6 +22,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -46,7 +47,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.hmis.yaml)")
-	rootCmd.Flags().BoolP("verbose", "v", false, "Enable application tracing")
+    debug.SetTraceFlag(rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Enable application tracing"))
 }
 
 // initConfig reads in config file and ENV variables if set.
