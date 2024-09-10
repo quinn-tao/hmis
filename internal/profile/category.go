@@ -1,6 +1,7 @@
 package profile
 
 import (
+	"strings"
 	"time"
 
 	"golang.org/x/text/currency"
@@ -38,6 +39,27 @@ type Recurrence struct {
     Freq Frequency
     Amount currency.Amount
     Date time.Time
+}
+
+// Find Category by searching particular path
+func (c *Category) FindCategoryWithPath(path string) (retc *Category, exists bool) {
+    tokens := strings.SplitN(path, "/",2)
+    if c.Name != tokens[0] {
+        return nil, false
+    }
+    
+    if len(tokens) == 2 {
+        for _, subcategory := range c.Sub {
+            target, exists := subcategory.FindCategoryWithPath(tokens[1])
+            if exists {
+                return target, exists
+            }
+        }
+    } else if len(tokens) == 1 {
+        return c, true
+    }
+
+    return nil, false
 }
 
 // Recursively find catgory in category tree

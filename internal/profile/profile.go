@@ -68,6 +68,9 @@ func LoadProfile() error {
 
 // Find a category 
 func FindCategory(name string) (c *Category, exists bool){
+    if c, exists := currProfile.Category.FindCategoryWithPath(name); exists {
+        return c, exists
+    }
     return currProfile.Category.FindCategoryRecursive(name)
 }
 
