@@ -91,12 +91,12 @@ var profileFieldParsers = []Parser{
 func (p *Profile) parseProfile(profilePath string) {
     debug.TraceF("Reading yaml file %v", profilePath)
     file, err := os.Open(profilePath) 
-    util.CheckFatalErrorf(err, "Failed to open profile %v", profilePath)
+    util.CheckErrorf(err, "Failed to open profile %v", profilePath)
    
     decoder := yaml.NewDecoder(file) 
     data := make(map[interface{}]interface{})
     err = decoder.Decode(data)
-    util.CheckFatalError(err)
+    util.CheckError(err)
     debug.TraceF("Parsed yaml: %v", data) 
 
     for _, profileParser := range profileFieldParsers {

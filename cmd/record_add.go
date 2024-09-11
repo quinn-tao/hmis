@@ -38,9 +38,7 @@ func parseRecordAddArgs(cmd *cobra.Command, args []string) {
     }
 
     err = db.InsertRec(recAmount, recName, recCategory) 
-    if err != nil {
-        display.Errorf("Error inserting record:%v", err)
-    }        
+    util.CheckErrorf(err, "Error inserting record")
 }
 
 func init() {

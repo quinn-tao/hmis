@@ -17,9 +17,7 @@ func StringToCents(amountStr string) (int, error){
     centsHi := 0
     if len(tokens) > 0 {
         hi, err := strconv.Atoi(tokens[0]) 
-        if err != nil {
-            return 0, errors.New(fmt.Sprintf("Invalid amount %v", amountStr))
-        }
+        CheckErrorf(err, "Invalid amount %v", amountStr)
         centsHi = hi
     } 
     

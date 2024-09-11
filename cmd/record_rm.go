@@ -5,7 +5,7 @@ import (
 
 	"github.com/quinn-tao/hmis/v1/internal/db"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
-	"github.com/quinn-tao/hmis/v1/internal/display"
+	"github.com/quinn-tao/hmis/v1/internal/util"
 	"github.com/spf13/cobra"
 )
 
@@ -19,15 +19,11 @@ var recordRmCmd = &cobra.Command{
 
 func parseRecordRmArgs(cmd *cobra.Command, args []string) {
     recId, err := strconv.Atoi(args[0])
-    if err != nil {
-        display.Error("Error parsing amount")
-    }
+    util.CheckErrorf(err, "Error parsing amount")
     debug.TraceF("cmd: rec/rm %v", recId)
 
     err = db.RemoveRec(recId)    
-    if err != nil {
-        display.Error("Error removing rec")
-    }
+    util.CheckErrorf(err, "Error removing rec")
 }
 
 func init() {

@@ -8,8 +8,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/quinn-tao/hmis/v1/config"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
-	"github.com/quinn-tao/hmis/v1/internal/display"
 	"github.com/quinn-tao/hmis/v1/internal/record"
+	"github.com/quinn-tao/hmis/v1/internal/util"
 )
 
 var Persistor struct {
@@ -22,17 +22,13 @@ func PersistorInit(path string) {
     if _, err := os.Stat(path); os.IsNotExist(err) {
         debug.TraceF("db at %v does not exist. Creating a new db", path)
         _, err := os.Create(path)
-        if err != nil {
-            display.Errorf("Cannot create db at %v", path)
-        }
+        util.CheckErrorf(err, "Cannot create db at %v", path)
     }
     debug.TraceF("Located db file at %v", path)
     
     // Open db connection
     db, err := sql.Open("sqlite3", config.StorageLocation()) 
-    if err != nil {
-        display.Errorf("Cannot open db at provided location: %v", config.StorageLocation())
-    }
+    util.CheckErrorf(err, "Cannot open db at provided location: %v", config.StorageLocation())
     Persistor.db = db
     debug.Trace("DB connection established")
     
@@ -44,9 +40,7 @@ func PersistorInit(path string) {
         category text not null
     )` 
     _, err = db.Exec(stmt)
-    if err != nil {
-        display.Errorf("Cannot create/locate rec table in db at %v: %v", path, err)
-    }
+    util.CheckErrorf(err, "Cannot create/locate rec table in db at %v: %v", path, err)
     debug.Trace("Necessary tables prepared")
 }
 

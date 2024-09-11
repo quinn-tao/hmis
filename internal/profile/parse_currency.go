@@ -25,7 +25,7 @@ func parseCurrency(p *Profile, yamlRoot map[interface{}]interface{}) error {
     }
     
     p.Currency, err = currency.ParseISO(code)
-    util.CheckFatalError(err) 
+    util.CheckError(err) 
     debug.TraceF("Currency parsed %v", p.Currency) 
     return err
 }

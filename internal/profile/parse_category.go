@@ -69,7 +69,7 @@ func categoryTreeMakeLeaf(p *Profile, content string) *Category {
     getAmount := func(token string) {
         // TODO: convert dollar amount to cents
         intval, err := strconv.Atoi(token)
-        util.CheckFatalError(err)
+        util.CheckError(err)
         amt := p.Currency.Amount(intval)
         category.Recurr = &Recurrence{Amount: amt}
     }
@@ -84,7 +84,7 @@ func categoryTreeMakeLeaf(p *Profile, content string) *Category {
 
     getDate := func(token string) {
         date, err := time.Parse(time.DateOnly, token)
-        util.CheckFatalError(err)
+        util.CheckError(err)
         debug.TraceF("%v", date)
     }
 

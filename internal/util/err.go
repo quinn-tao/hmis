@@ -2,8 +2,9 @@ package util
 
 import (
 	"fmt"
-	"log"
 	"os"
+
+	"github.com/quinn-tao/hmis/v1/internal/debug"
 )
 
 const (
@@ -11,32 +12,19 @@ const (
     end = "\033[0m"
 )
 
-// Fatals are used for user errors
-func CheckFatalError(err error) {
+func CheckError(err error) {
     if err != nil {
+        debug.TraceF("%v", err)
         fmt.Printf("%s %v %s\n", red, err, end)
         os.Exit(1)
     }
 }
 
-func CheckFatalErrorf(err error, msg string, args ...interface{}) {
+func CheckErrorf(err error, msg string, args ...interface{}) {
     if err != nil {
         errMsg := fmt.Sprintf(msg, args...)
+        debug.TraceF("%v", errMsg)
         fmt.Printf("%s %s :%v %s\n", red, errMsg, err, end)
         os.Exit(1)
-    }
-}
-
-// Panics are used for developer used errors
-func CheckPanicError(err error) {
-    if err != nil {
-        panic(err)
-    }
-}
-
-func CheckPanicErrorf(err error, msg string, args ...interface{}) {
-    if err != nil {
-        errMsg := fmt.Sprintf(msg, args...)
-        log.Panicf("%s :%v", errMsg, err)
     }
 }

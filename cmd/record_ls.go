@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/quinn-tao/hmis/v1/internal/db"
-	"github.com/quinn-tao/hmis/v1/internal/display"
+	"github.com/quinn-tao/hmis/v1/internal/util"
 	"github.com/spf13/cobra"
 )
 
@@ -18,9 +18,7 @@ var recordLsCmd = &cobra.Command{
 func parseRecordLsArgs(cmd *cobra.Command, args []string) {
     // TODO: [record ls] support filtering/fuzzy matching in names
     recs, err := db.GetAllRec()
-    if err != nil {
-        display.Errorf("Cannot get records from db:%v", recs)
-    }
+    util.CheckErrorf(err, "Cannot get records from db:%v", recs)
     for _, rec := range recs {
         // TODO: this should be in display module 
         fmt.Println(rec)
