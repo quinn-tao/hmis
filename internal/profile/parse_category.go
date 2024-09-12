@@ -49,6 +49,9 @@ func categoryTreeMake(p *Profile, content interface{}) *Category {
             }
             for _, subContent := range subContentList {
                 subCategory := categoryTreeMake(p, subContent)
+                if _, exists := c.Sub[subCategory.Name]; exists {
+                    display.Errorf("Duplicate category of %v", subCategory.Name)
+                }
                 c.Sub[subCategory.Name] = subCategory
             } 
             c.Name = key 
