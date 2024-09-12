@@ -29,7 +29,7 @@ func parseMode(p *Profile, yamlRoot map[interface{}]interface{}) error {
     }
     p.Mode = mode
 
-    debug.TraceF("Mode parsed %v", p.Mode) 
+    debug.Tracef("Mode parsed %v", p.Mode) 
     return err
 }
 

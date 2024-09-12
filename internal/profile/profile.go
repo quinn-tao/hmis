@@ -32,7 +32,7 @@ func LoadProfile() error {
     var newProfile Profile
     dir := config.ProfileDir()
     
-    debug.TraceF("Loading profile directory %v", dir)
+    debug.Tracef("Loading profile directory %v", dir)
     profiles, err := os.ReadDir(dir) 
     if err != nil {
         log.Panicf("Error loading profile: %v", err)
@@ -41,12 +41,12 @@ func LoadProfile() error {
     newProfile.Profiles = make([]string, 0)
     
     name := config.CurrentProfileName()
-    debug.TraceF("Config: current profile name %v", name)
+    debug.Tracef("Config: current profile name %v", name)
     for _, file := range profiles {
         tokens := strings.Split(file.Name(),".")
         if len(tokens) < 2 || tokens[1] != "yaml" {
             // TODO: support profile names with multiple dots 
-            debug.TraceF("Skipped file %v", file.Name())
+            debug.Tracef("Skipped file %v", file.Name())
             continue
         }
 
@@ -89,7 +89,7 @@ var profileFieldParsers = []Parser{
 }
 
 func (p *Profile) parseProfile(profilePath string) {
-    debug.TraceF("Reading yaml file %v", profilePath)
+    debug.Tracef("Reading yaml file %v", profilePath)
     file, err := os.Open(profilePath) 
     util.CheckErrorf(err, "Failed to open profile %v", profilePath)
    
@@ -97,7 +97,7 @@ func (p *Profile) parseProfile(profilePath string) {
     data := make(map[interface{}]interface{})
     err = decoder.Decode(data)
     util.CheckError(err)
-    debug.TraceF("Parsed yaml: %v", data) 
+    debug.Tracef("Parsed yaml: %v", data) 
 
     for _, profileParser := range profileFieldParsers {
         profileParser.parse(p, data)

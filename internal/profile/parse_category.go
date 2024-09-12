@@ -18,7 +18,7 @@ func parseCategory(p *Profile, yamlRoot map[interface{}]interface{}) error {
 
     val, exists := yamlRoot[categoryKey]
     if !exists {
-        debug.TraceF("Category not found in profile. Skipping...")     
+        debug.Tracef("Category not found in profile. Skipping...")     
         return parseError(categoryKey)
     }
     
@@ -26,7 +26,7 @@ func parseCategory(p *Profile, yamlRoot map[interface{}]interface{}) error {
     categoryYamlRoot[categoryKey] = val
     p.Category = categoryTreeMake(p, categoryYamlRoot)
 
-    debug.TraceF("Category parsed: %v", p.Category)
+    debug.Tracef("Category parsed: %v", p.Category)
 
     return err
 }
@@ -34,7 +34,7 @@ func parseCategory(p *Profile, yamlRoot map[interface{}]interface{}) error {
 func categoryTreeMake(p *Profile, content interface{}) *Category {
     switch contentType := content.(type) {
     default:
-        debug.TraceF("Category has unexpected type:%T", contentType)
+        debug.Tracef("Category has unexpected type:%T", contentType)
         display.Errorf("Error parsing category {%v}", content)
         return nil
     case string:
@@ -85,7 +85,7 @@ func categoryTreeMakeLeaf(p *Profile, content string) *Category {
     getDate := func(token string) {
         date, err := time.Parse(time.DateOnly, token)
         util.CheckError(err)
-        debug.TraceF("%v", date)
+        debug.Tracef("%v", date)
     }
 
     getters := []func(string) {

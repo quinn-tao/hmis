@@ -20,7 +20,7 @@ var recordRmCmd = &cobra.Command{
 func parseRecordRmArgs(cmd *cobra.Command, args []string) {
     recId, err := strconv.Atoi(args[0])
     util.CheckErrorf(err, "Error parsing amount")
-    debug.TraceF("cmd: rec/rm %v", recId)
+    debug.Tracef("cmd: rec/rm %v", recId)
 
     err = db.RemoveRec(recId)    
     util.CheckErrorf(err, "Error removing rec")

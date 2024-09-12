@@ -11,7 +11,7 @@ func Trace(msg string, val ...interface{}) {
     }
 }
 
-func TraceF(msg string, val ...interface{}) {
+func Tracef(msg string, val ...interface{}) {
     if traceEnabled != nil && *traceEnabled {
         logger.Printf(msg, val...)
     }

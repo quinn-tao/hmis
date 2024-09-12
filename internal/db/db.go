@@ -20,11 +20,11 @@ var Persistor struct {
 func PersistorInit(path string) {
     // Create db if not exist
     if _, err := os.Stat(path); os.IsNotExist(err) {
-        debug.TraceF("db at %v does not exist. Creating a new db", path)
+        debug.Tracef("db at %v does not exist. Creating a new db", path)
         _, err := os.Create(path)
         util.CheckErrorf(err, "Cannot create db at %v", path)
     }
-    debug.TraceF("Located db file at %v", path)
+    debug.Tracef("Located db file at %v", path)
     
     // Open db connection
     db, err := sql.Open("sqlite3", config.StorageLocation()) 
@@ -46,7 +46,7 @@ func PersistorInit(path string) {
 
 func PersistorClose() {
     Persistor.db.Close()
-    defer debug.TraceF("Connection to %v closed", Persistor.Path)
+    defer debug.Tracef("Connection to %v closed", Persistor.Path)
 }
 
 func InsertRec(cents int, name string, category string) error {

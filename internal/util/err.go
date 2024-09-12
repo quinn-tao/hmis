@@ -14,7 +14,7 @@ const (
 
 func CheckError(err error) {
     if err != nil {
-        debug.TraceF("%v", err)
+        debug.Tracef("%v", err)
         fmt.Printf("%s %v %s\n", red, err, end)
         os.Exit(1)
     }
@@ -23,7 +23,7 @@ func CheckError(err error) {
 func CheckErrorf(err error, msg string, args ...interface{}) {
     if err != nil {
         errMsg := fmt.Sprintf(msg, args...)
-        debug.TraceF("%v", errMsg)
+        debug.Tracef("%v", errMsg)
         fmt.Printf("%s %s :%v %s\n", red, errMsg, err, end)
         os.Exit(1)
     }

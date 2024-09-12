@@ -28,7 +28,7 @@ func parseRecordAddArgs(cmd *cobra.Command, args []string) {
     // TODO: support category in path format, for example:
     //       grocery/coffee
     recCategory := args[2]
-    debug.TraceF("cmd: rec/add %v %v %v", recName, recAmount, recCategory)
+    debug.Tracef("cmd: rec/add %v %v %v", recName, recAmount, recCategory)
 
     _, found := profile.FindCategory(recCategory)
     if !found {
