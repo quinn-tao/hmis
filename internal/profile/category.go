@@ -1,6 +1,8 @@
 package profile
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -18,7 +20,7 @@ const (
     FreqQuaterly = "Quaterly"
     FreqYearly = "Yearly"
 )
-var freqEnumMap = map[string]Frequency {
+var freqFlagToEnum = map[string]Frequency {
     "": FreqNone,  // Default
     "dd": FreqDaily,
     "ww": FreqWeekly, 
@@ -26,6 +28,15 @@ var freqEnumMap = map[string]Frequency {
     "mm": FreqMonthly,
     "qq": FreqQuaterly,
     "yy": FreqYearly,
+}
+var freqEnumToFlag = map[Frequency]string {
+    FreqNone: "",  // Default
+    FreqDaily: "dd",
+    FreqWeekly: "ww", 
+    FreqBiWeekly: "2ww",
+    FreqMonthly: "mm" ,
+    FreqQuaterly: "qq",
+    FreqYearly: "yy",
 }
 
 // TODO: logic handling duplicate categories 
@@ -76,7 +87,19 @@ func (c *Category) FindCategoryRecursive(name string) (retc *Category, exists bo
     return nil, false 
 }
 
-var indent = 0
+func (this *Category) Equals(other *Category) bool {
+    if this.Name != other.Name {
+        return false
+    }    
+    for name, thisSub := range this.Sub {
+        otherSub, exists := other.Sub[name]
+        if !exists || !thisSub.Equals(otherSub) {
+            return false
+        }
+    }
+    return true 
+}
+
 func (c Category) String() string {
     str := ""
     indent += 1
@@ -92,4 +115,36 @@ func (c Category) String() string {
         str += ": " + string(c.Recurr.Freq)
     }
     return str
+}
+
+var indent = 0
+// Implement yaml unmarshalling
+func (c *Category) MarshalYAML() (interface{}, error) {
+    str := "- " + c.Name
+    if c.Sub != nil && len(c.Sub) > 0 {
+        str += ":"
+        indent += 1
+        for _, sc := range(c.Sub) {
+            prefix := ""
+            for i := 0; i < indent; i++ {
+                prefix += "    "
+            }
+            next, err := sc.MarshalYAML()
+            if err != nil {
+                return nil, err
+            }
+            str += "\n" + prefix + next.(string)
+        }
+        indent -= 1
+        return str, nil
+    }
+    if c.Recurr != nil {
+        flag, exists := freqEnumToFlag[c.Recurr.Freq]
+        if !exists {
+            return nil, errors.New(fmt.Sprintf("frequency setting %v not exists", string(c.Recurr.Freq)))
+        }
+        amtStr := fmt.Sprintf("%v",c.Recurr.Amount)
+        str += amtStr[3:len(amtStr)-1] + " " + flag  
+    }
+    return str, nil
 }

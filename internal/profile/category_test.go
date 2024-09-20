@@ -6,6 +6,90 @@ import (
 	"github.com/quinn-tao/hmis/v1/internal/profile"
 )
 
+func TestCategoryEqual(t *testing.T) {
+    categoryNoSub1 := profile.Category {
+        Name: "no sub 1",
+    }
+    categoryNoSub1Dup := profile.Category {
+        Name: "no sub 1",
+    }
+    categoryNoSub2 := profile.Category {
+        Name: "no sub 2",
+    }
+    categoryNoSub2Dup := profile.Category {
+        Name: "no sub 2",
+    }
+    
+    tcs := []struct {
+        Name string 
+        This *profile.Category
+        That *profile.Category
+        ExpEqual bool
+    } {
+        {
+            Name: "two category equal",
+            This: &profile.Category{
+                Name: "a",
+                Sub: map[string]*profile.Category{
+                    categoryNoSub1.Name: &categoryNoSub1,
+                    categoryNoSub2.Name: &categoryNoSub2,
+                },
+            },
+            That: &profile.Category{
+                Name: "a",
+                Sub: map[string]*profile.Category{
+                    categoryNoSub1Dup.Name: &categoryNoSub1Dup,
+                    categoryNoSub2Dup.Name: &categoryNoSub2Dup,
+                },
+            },
+            ExpEqual: true,
+        },
+        {
+            Name: "two category sub equal but name differ",
+            This: &profile.Category{
+                Name: "a",
+                Sub: map[string]*profile.Category{
+                    categoryNoSub1.Name: &categoryNoSub1,
+                    categoryNoSub2.Name: &categoryNoSub2,
+                },
+            },
+            That: &profile.Category{
+                Name: "b",
+                Sub: map[string]*profile.Category{
+                    categoryNoSub1Dup.Name: &categoryNoSub1Dup,
+                    categoryNoSub2Dup.Name: &categoryNoSub2Dup,
+                },
+            },
+            ExpEqual: false,
+        },
+        {
+            Name: "two category name equal but sub differ",
+            This: &profile.Category{
+                Name: "a",
+                Sub: map[string]*profile.Category{
+                    categoryNoSub1.Name: &categoryNoSub1,
+                    categoryNoSub2.Name: &categoryNoSub2,
+                },
+            },
+            That: &profile.Category{
+                Name: "a",
+                Sub: map[string]*profile.Category{
+                    categoryNoSub2Dup.Name: &categoryNoSub2Dup,
+                },
+            },
+            ExpEqual: false,
+        },
+    }
+
+    for _, tc := range tcs {
+        t.Logf("[TestCategoryEqual] Running %v", tc.Name)
+        actualEqual := tc.This.Equals(tc.That)
+        if actualEqual != tc.ExpEqual {
+            t.Fatalf("Expected %v, Got %v", tc.ExpEqual, actualEqual)
+        }
+    }
+}
+
 func TestFindCategoryWithPath(t *testing.T) {
     tcs := []struct {
         Name string 
