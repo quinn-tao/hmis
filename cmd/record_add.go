@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/quinn-tao/hmis/v1/internal/db"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/display"
@@ -32,9 +34,16 @@ func parseRecordAddArgs(cmd *cobra.Command, args []string) {
 
     _, found := profile.FindCategory(recCategory)
     if !found {
-        // TODO: [interactive shell] ask user whether they 
-        // would like to add a new category  
-        display.Errorf("Category %v not found", recCategory)
+        msg := fmt.Sprintf("Category %v not found. Would you like to add %v as a new category?",
+            recCategory, recCategory)
+        if display.DialogYesNo(msg) {
+            msg = fmt.Sprintf("Name for new category?")
+            newCategoryPath := display.Dialog(msg)
+            debug.Tracef("User adds new category %v", newCategoryPath)
+            profile.AddCategoryToProfile(newCategoryPath)  
+        } else {
+            display.Errorf("Category %v not found", recCategory)
+        }
     }
 
     err = db.InsertRec(recAmount, recName, recCategory) 

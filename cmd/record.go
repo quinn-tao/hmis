@@ -6,6 +6,7 @@ package cmd
 import (
 	"github.com/quinn-tao/hmis/v1/config"
 	"github.com/quinn-tao/hmis/v1/internal/db"
+	"github.com/quinn-tao/hmis/v1/internal/profile"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +19,7 @@ var recordCmd = &cobra.Command{
         db.PersistorInit(config.StorageLocation())
     },
     PersistentPostRun: func(cmd *cobra.Command, args []string) {
+        profile.UnloadProfile()
         db.PersistorClose()
     },
 }

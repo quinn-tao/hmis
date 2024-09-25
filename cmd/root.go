@@ -35,6 +35,10 @@ var rootCmd = &cobra.Command{
 	Use:   "hmis",
 	Short: "(H)ow (M)uch (I) (S)pent?",
     Long: "hmis is a command-line tool for managing personal budgetting and expenses",
+    PersistentPostRun: func(cmd *cobra.Command, args []string) {
+        debug.Tracef("Closing profile")
+        profile.UnloadProfile()
+    },
 }
 
 func Execute() {
@@ -84,5 +88,4 @@ func initConfig() {
 	}
     
     profile.LoadProfile()
-
 }

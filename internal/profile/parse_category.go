@@ -78,7 +78,7 @@ func categoryTreeMakeLeaf(p *Profile, content string) *Category {
     }
 
     getFreq := func(token string) {
-        freq, ok := freqEnumMap[token]
+        freq, ok := freqFlagToEnum[token]
         if !ok {
             display.Errorf("Error parsing frequency setting in %v", content)
         }

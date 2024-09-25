@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// Parser Interface
 type Parser struct {
     parse func(* Profile, map[interface{}]interface{}) error
 }

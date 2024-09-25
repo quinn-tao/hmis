@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"golang.org/x/text/currency"
 )
 
@@ -120,22 +121,35 @@ func (c Category) String() string {
 var indent = 0
 // Implement yaml unmarshalling
 func (c *Category) MarshalYAML() (interface{}, error) {
+    str := ""
+    if c.Sub != nil && len(c.Sub) > 0 {
+        for _, sc := range(c.Sub) {
+            next, err := sc.marshalYaml(1)
+            if err != nil {
+                return nil, err
+            } 
+            str += fmt.Sprintf("\n%v", next)
+        }
+    }
+    debug.Tracef("\n%v\n", str)
+    return str, nil
+}
+
+func (c *Category) marshalYaml(indent int) (interface{}, error) {
     str := "- " + c.Name
     if c.Sub != nil && len(c.Sub) > 0 {
         str += ":"
-        indent += 1
         for _, sc := range(c.Sub) {
             prefix := ""
             for i := 0; i < indent; i++ {
                 prefix += "    "
             }
-            next, err := sc.MarshalYAML()
+            next, err := sc.marshalYaml(indent + 1)
             if err != nil {
                 return nil, err
             }
             str += "\n" + prefix + next.(string)
         }
-        indent -= 1
         return str, nil
     }
     if c.Recurr != nil {
@@ -148,3 +162,4 @@ func (c *Category) MarshalYAML() (interface{}, error) {
     }
     return str, nil
 }
+

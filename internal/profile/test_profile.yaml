@@ -1,0 +1,16 @@
+currency : cad 
+mode  : pessimistic
+limit : 5000
+name: default
+
+category: 
+    - grocery
+    - utility:
+        - hydro 50 mm 
+        - internet 120 mm 2024-08-31
+        - cell 50 mm
+    - dine_out 
+    - rental 1350 mm
+    - car:
+        - insurance 385 mm
+    - commute 50 dd
