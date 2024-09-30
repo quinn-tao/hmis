@@ -81,6 +81,10 @@ func (r RawAmountVal) String() string {
     return sb.String()
 }
 
+func (r RawAmountVal) MarshalYAML() (interface{}, error){
+    return r.String(), nil
+}
+
 func getHi(hiStr string) (int64, error) {
     tokens := strings.Split(hiStr, ",")
     
