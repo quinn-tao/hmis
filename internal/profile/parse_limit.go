@@ -20,6 +20,7 @@ func parseLimit(p *Profile, yamlRoot map[interface{}]interface{}) error {
     }
     
     limitStr := fmt.Sprint(limitRaw)
+
     amt, err := amount.NewFromString(limitStr)
     if err != nil {
         return err

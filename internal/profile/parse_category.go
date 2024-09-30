@@ -27,7 +27,6 @@ func parseCategory(p *Profile, yamlRoot map[interface{}]interface{}) error {
     p.Category = categoryTreeMake(p, categoryYamlRoot)
 
     debug.Tracef("Category parsed: %v", p.Category)
-
     return err
 }
 

@@ -12,7 +12,6 @@ import (
 	"github.com/quinn-tao/hmis/v1/internal/amount"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/util"
-	"golang.org/x/text/currency"
 	"gopkg.in/yaml.v3"
 )
 
@@ -21,7 +20,7 @@ type Profile struct {
     Name string
     Limit amount.RawAmountVal
     Mode Mode
-    Currency currency.Unit
+    Currency amount.Currency
     Category *Category
 
     updated bool
@@ -146,34 +145,13 @@ func (p *Profile) WriteBack(profilePath string) error {
     file, err := os.OpenFile(profilePath, os.O_WRONLY | os.O_TRUNC, 0600)
     util.CheckError(err)
     defer file.Close()
-    data, err := currProfile.MarshalYAML()
+    encoder := yaml.NewEncoder(file)
+    defer encoder.Close()
+    err = encoder.Encode(currProfile)
     if err != nil {
         return err
     }
-    _, err = file.WriteString(data.(string))
     return err
-}
-
-func (p *Profile) MarshalYAML() (interface{}, error) {
-    yamlMap := make(map[string]string, 5)
-
-    yamlMap["name"] = p.Name
-    yamlMap["mode"] = string(p.Mode)
-    amtStr := fmt.Sprintf("%v",p.Limit)
-    yamlMap["limit"] = amtStr[3:len(amtStr)-1] 
-    yamlMap["currency"] = p.Currency.String()
-
-    categoryRetv, err := p.Category.MarshalYAML()
-    if err != nil {
-        return nil, err
-    }
-    yamlMap["category"] = categoryRetv.(string)
-    
-    retstr := strings.Builder{}
-    for k, v := range yamlMap {
-        retstr.WriteString(fmt.Sprintf("%v: %v\n", k, v))
-    }
-    return retstr.String(), nil 
 }
 
 // ****************************************************************************** //

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/quinn-tao/hmis/v1/internal/amount"
-	"github.com/quinn-tao/hmis/v1/internal/debug"
 )
 
 // Recurrent expense cycle settings
@@ -38,6 +37,10 @@ var freqEnumToFlag = map[Frequency]string {
     FreqMonthly: "mm" ,
     FreqQuaterly: "qq",
     FreqYearly: "yy",
+}
+
+func (f Frequency) String() string {
+    return freqEnumToFlag[f]
 }
 
 // TODO: logic handling duplicate categories 
@@ -101,6 +104,7 @@ func (this *Category) Equals(other *Category) bool {
     return true 
 }
 
+var indent = 0
 func (c Category) String() string {
     str := ""
     indent += 1
@@ -118,48 +122,37 @@ func (c Category) String() string {
     return str
 }
 
-var indent = 0
-// Implement yaml unmarshalling
 func (c *Category) MarshalYAML() (interface{}, error) {
-    str := ""
-    if c.Sub != nil && len(c.Sub) > 0 {
-        for _, sc := range(c.Sub) {
-            next, err := sc.marshalYaml(1)
-            if err != nil {
-                return nil, err
-            } 
-            str += fmt.Sprintf("\n%v", next)
-        }
+    yml, err := c.marshalYAML()
+    if err != nil {
+        return  nil, err
     }
-    debug.Tracef("\n%v\n", str)
-    return str, nil
+    content, exists := yml.(map[string][]interface{})["category"]
+    if !exists {
+        return nil, errors.New("Marshalled category tree does not contain 'category' key")
+    } 
+    return content, nil
 }
 
-func (c *Category) marshalYaml(indent int) (interface{}, error) {
-    str := "- " + c.Name
-    if c.Sub != nil && len(c.Sub) > 0 {
-        str += ":"
-        for _, sc := range(c.Sub) {
-            prefix := ""
-            for i := 0; i < indent; i++ {
-                prefix += "    "
-            }
-            next, err := sc.marshalYaml(indent + 1)
-            if err != nil {
-                return nil, err
-            }
-            str += "\n" + prefix + next.(string)
+// Marshalling a category into yaml produces one of:
+//   a string, represents a leaf node in the category tree, or
+//   a mapping from name of this category to an array of children yaml values
+func (c *Category) marshalYAML() (interface{}, error) {
+    if c.Sub == nil || len(c.Sub) == 0 {
+        if c.Recurr == nil {
+            return fmt.Sprintf("%v", c.Name), nil
         }
-        return str, nil
+        return fmt.Sprintf("%v %v %v", c.Name, c.Recurr.Amount, c.Recurr.Freq), nil
     }
-    if c.Recurr != nil {
-        flag, exists := freqEnumToFlag[c.Recurr.Freq]
-        if !exists {
-            return nil, errors.New(fmt.Sprintf("frequency setting %v not exists", string(c.Recurr.Freq)))
+    yml := map[string][]interface{}{
+        c.Name: make([]interface{}, 0, len(c.Sub)),
+    }
+    for _, sub := range c.Sub {
+        subYml, err := sub.marshalYAML()
+        if err != nil {
+            return nil, err
         }
-        amtStr := fmt.Sprintf(" %v",c.Recurr.Amount)
-        str += amtStr + " " + flag  
-    }
-    return str, nil
+        yml[c.Name] = append(yml[c.Name], subYml)
+    }  
+    return yml, nil
 }
-
