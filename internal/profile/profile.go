@@ -9,6 +9,7 @@ import (
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/quinn-tao/hmis/v1/config"
+	"github.com/quinn-tao/hmis/v1/internal/amount"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/util"
 	"golang.org/x/text/currency"
@@ -18,7 +19,7 @@ import (
 type Profile struct {
     profiles []string
     Name string
-    Limit currency.Amount
+    Limit amount.RawAmountVal
     Mode Mode
     Currency currency.Unit
     Category *Category

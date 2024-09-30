@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/quinn-tao/hmis/v1/config"
+	"github.com/quinn-tao/hmis/v1/internal/amount"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/record"
 	"github.com/quinn-tao/hmis/v1/internal/util"
@@ -35,7 +36,7 @@ func PersistorInit(path string) {
     // Create necessary tables if not exists 
     stmt := `create table if not exists rec (
         id integer not null primary key, 
-        cents int not null, 
+        cents bigint not null, 
         name text not null,
         category text not null
     )` 
@@ -49,7 +50,7 @@ func PersistorClose() {
     defer debug.Tracef("Connection to %v closed", Persistor.Path)
 }
 
-func InsertRec(cents int, name string, category string) error {
+func InsertRec(cents amount.RawAmountVal, name string, category string) error {
     stmt, err := Persistor.db.Prepare("insert into rec(cents, name, category) values (?, ?, ?)")
     if err != nil {
         return err
@@ -68,7 +69,7 @@ func GetAllRec() ([]record.Record, error) {
     retv := make([]record.Record, 0)
     for rows.Next() {
         var rec record.Record
-        err = rows.Scan(&rec.Id, &rec.Cents, &rec.Name, &rec.Category)
+        err = rows.Scan(&rec.Id, &rec.Amount, &rec.Name, &rec.Category)
         if err != nil {
             return nil, err
         }

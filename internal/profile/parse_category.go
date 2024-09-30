@@ -1,10 +1,10 @@
 package profile
 
 import (
-	"strconv"
 	"strings"
 	"time"
 
+	"github.com/quinn-tao/hmis/v1/internal/amount"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/display"
 	"github.com/quinn-tao/hmis/v1/internal/util"
@@ -71,9 +71,8 @@ func categoryTreeMakeLeaf(p *Profile, content string) *Category {
 
     getAmount := func(token string) {
         // TODO: convert dollar amount to cents
-        intval, err := strconv.Atoi(token)
+        amt, err := amount.NewFromString(token)
         util.CheckError(err)
-        amt := p.Currency.Amount(intval)
         category.Recurr = &Recurrence{Amount: amt}
     }
 

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/quinn-tao/hmis/v1/internal/amount"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
-	"golang.org/x/text/currency"
 )
 
 // Recurrent expense cycle settings
@@ -49,7 +49,7 @@ type Category struct {
 
 type Recurrence struct {
     Freq Frequency
-    Amount currency.Amount
+    Amount amount.RawAmountVal
     Date time.Time
 }
 
@@ -157,8 +157,8 @@ func (c *Category) marshalYaml(indent int) (interface{}, error) {
         if !exists {
             return nil, errors.New(fmt.Sprintf("frequency setting %v not exists", string(c.Recurr.Freq)))
         }
-        amtStr := fmt.Sprintf("%v",c.Recurr.Amount)
-        str += amtStr[3:len(amtStr)-1] + " " + flag  
+        amtStr := fmt.Sprintf(" %v",c.Recurr.Amount)
+        str += amtStr + " " + flag  
     }
     return str, nil
 }

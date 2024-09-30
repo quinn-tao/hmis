@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/quinn-tao/hmis/v1/internal/amount"
 	"github.com/quinn-tao/hmis/v1/internal/db"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/display"
@@ -20,7 +21,7 @@ var recordAddCmd = &cobra.Command{
 }
 
 func parseRecordAddArgs(cmd *cobra.Command, args []string) {
-    recAmount, err := util.StringToCents(args[0])
+    recAmount, err := amount.NewFromString(args[0])
     if err != nil {
         display.Errorf("Error parsing amount:%v", err)
     }
