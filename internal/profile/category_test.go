@@ -6,6 +6,55 @@ import (
 	"github.com/quinn-tao/hmis/v1/internal/profile"
 )
 
+func TestCategoryAdd(t *testing.T) {
+    prepComplexCategories()
+    
+    tcs := []struct {
+        Name string 
+        NewPath string 
+        Success bool
+    } {
+        {
+            Name: "[TestCategoryAdd] Test add as single child", 
+            NewPath: "t0/t1/new",
+            Success: true,
+        }, 
+        {
+            Name: "[TestCategoryAdd] Test add as a sibling", 
+            NewPath: "t0/t2/t4/new",
+            Success: true,
+        }, 
+        {
+            Name: "[TestCategoryAdd] Test add failed as non-existent path", 
+            NewPath: "t0/t0/new",
+            Success: false,
+        }, {
+            Name: "[TestCategoryAdd] Test add failed as duplicate category", 
+            NewPath: "t0/t1",
+            Success: false,
+        },
+    }
+    
+    for _, tc := range tcs {
+        t.Logf("[TestCategoryAdd] running %v", tc.Name)
+        
+        newCategory, err := t0.AddCategory(tc.NewPath)
+        if tc.Success {
+            if err != nil {
+                t.Fatalf("Expected no err, got %v", err)
+            }
+            foundCategory, exists := t0.FindCategoryWithPath(tc.NewPath)
+            if !exists || !foundCategory.Equals(newCategory) {
+                t.Fatalf("Expected new category be found, but didn't")
+            }
+        } else {
+            if err == nil {
+                t.Fatalf("Expected err, got none")
+            }
+        }
+    }
+}
+
 func TestCategoryEqual(t *testing.T) {
     categoryNoSub1 := profile.Category {
         Name: "no sub 1",
@@ -139,7 +188,7 @@ func TestFindCategoryWithPath(t *testing.T) {
         },
     }
 
-    prepareCategoryTrees()
+    prepSimpleCategories()
 
     for _, tc := range tcs {
         t.Logf("[TestFindCategoryWithPath] Running %v", tc.Name)
@@ -199,7 +248,7 @@ func TestFindCategoryRecursive(t *testing.T) {
         },
     }
 
-    prepareCategoryTrees()
+    prepSimpleCategories()
 
     for _, tc := range tcs {
         t.Logf("[TestFindCategoryRecursive] Running %v", tc.Name)
@@ -239,7 +288,7 @@ var ChainNode2 = &profile.Category {
     Name: "node2",
 }
 
-func prepareCategoryTrees() {
+func prepSimpleCategories() {
     // Form a tree:
     // multi ---> single 
     //      |
@@ -248,3 +297,48 @@ func prepareCategoryTrees() {
     MultiNode.Sub["node1"] = ChainNode1
     ChainNode1.Sub["node2"] = ChainNode2
 }
+
+var (
+    t0 profile.Category
+    t1 profile.Category
+    t2 profile.Category
+    t3 profile.Category
+    t4 profile.Category
+    t5 profile.Category
+    t6 profile.Category
+    t7 profile.Category
+    t8 profile.Category
+    t9 profile.Category
+)
+
+func prepComplexCategories() {
+    // Form a tree:
+    //  t0 --- t1 
+    //     | 
+    //      --- t2 --- t3 --- t6
+    //            | 
+    //             --- t4 --- t7 --- t8
+    //            |             | 
+    //             --- t5        --- t9 
+
+    t0.Name = "t0"
+    t1.Name = "t1"
+    t2.Name = "t2"
+    t3.Name = "t3"
+    t4.Name = "t4"
+    t5.Name = "t5"
+    t6.Name = "t6"
+    t7.Name = "t7"
+    t8.Name = "t8"
+    t9.Name = "t9" 
+
+    t0.Sub = map[string]*profile.Category{t1.Name:&t1, t2.Name:&t2,}
+    t2.Sub = map[string]*profile.Category{
+        t3.Name: &t3, t4.Name: &t4, t5.Name: &t5,
+    }
+    t3.Sub = map[string]*profile.Category{t6.Name: &t6}
+    t4.Sub = map[string]*profile.Category{t6.Name: &t7}
+    t7.Sub = map[string]*profile.Category{t6.Name: &t8, t9.Name: &t9}
+}
+
+

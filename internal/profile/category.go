@@ -9,6 +9,11 @@ import (
 	"github.com/quinn-tao/hmis/v1/internal/amount"
 )
 
+var (
+    ErrInvalidCategoryPath = errors.New("Invalid category path")
+    ErrAlreadyExists = errors.New("Category path already exists")
+)
+
 // Recurrent expense cycle settings
 type Frequency string
 const (
@@ -54,6 +59,32 @@ type Recurrence struct {
     Freq Frequency
     Amount amount.RawAmountVal
     Date time.Time
+}
+
+func (c *Category) AddCategory(path string) (*Category, error) {
+    pathTokens := strings.Split(path, "/")
+    if len(pathTokens) < 1 {
+        return nil, ErrInvalidCategoryPath
+    }
+    prefixPath := strings.Join(pathTokens[:len(pathTokens)-1], "/") 
+    newCategoryName := pathTokens[len(pathTokens)-1]
+    newCategory := Category{Name:newCategoryName}
+    
+    parent, exists := c.FindCategoryWithPath(prefixPath)
+    if !exists {
+        return nil, ErrInvalidCategoryPath
+    }
+    
+    if parent.Sub == nil {
+        parent.Sub = make(map[string]*Category)
+    }
+    _, exists = parent.Sub[newCategoryName]
+    if exists {
+        return nil, ErrAlreadyExists
+    }
+
+    parent.Sub[newCategoryName] = &newCategory
+    return &newCategory, nil
 }
 
 // Find Category by searching particular path
