@@ -90,22 +90,20 @@ func (c *Category) AddCategory(path string) (*Category, error) {
 // Find Category by searching particular path
 func (c *Category) FindCategoryWithPath(path string) (retc *Category, exists bool) {
     tokens := strings.SplitN(path, "/",2)
-    if c.Name != tokens[0] {
+
+    if c.Sub == nil || len(c.Sub) == 0 {
+        return nil, false
+    }
+
+    next, exists := c.Sub[tokens[0]]
+    if !exists {
         return nil, false
     }
     
-    if len(tokens) == 2 {
-        for _, subcategory := range c.Sub {
-            target, exists := subcategory.FindCategoryWithPath(tokens[1])
-            if exists {
-                return target, exists
-            }
-        }
-    } else if len(tokens) == 1 {
-        return c, true
+    if len(tokens) == 1 {
+        return next, true
     }
-
-    return nil, false
+    return next.FindCategoryWithPath(tokens[1])
 }
 
 // Recursively find catgory in category tree

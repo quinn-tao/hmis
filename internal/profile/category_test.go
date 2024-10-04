@@ -16,21 +16,21 @@ func TestCategoryAdd(t *testing.T) {
     } {
         {
             Name: "[TestCategoryAdd] Test add as single child", 
-            NewPath: "t0/t1/new",
+            NewPath: "t1/new",
             Success: true,
         }, 
         {
             Name: "[TestCategoryAdd] Test add as a sibling", 
-            NewPath: "t0/t2/t4/new",
+            NewPath: "t2/t4/new",
             Success: true,
         }, 
         {
             Name: "[TestCategoryAdd] Test add failed as non-existent path", 
-            NewPath: "t0/t0/new",
+            NewPath: "t8/new",
             Success: false,
         }, {
             Name: "[TestCategoryAdd] Test add failed as duplicate category", 
-            NewPath: "t0/t1",
+            NewPath: "t1",
             Success: false,
         },
     }
@@ -140,65 +140,60 @@ func TestCategoryEqual(t *testing.T) {
 }
 
 func TestFindCategoryWithPath(t *testing.T) {
+    prepComplexCategories()
+
     tcs := []struct {
         Name string 
         TargetPath string 
-        CT *profile.Category 
         ExpFound bool
         ExpCT *profile.Category
     } { 
         {
             Name: "one node found", 
-            TargetPath: "single",
-            CT: SingleNode,
+            TargetPath: "t1",
             ExpFound: true, 
-            ExpCT: SingleNode,
+            ExpCT: &t1,
         },
         {
             Name: "one node not found - not matching", 
-            TargetPath: "default",
-            CT: SingleNode,
+            TargetPath: "t3",
             ExpFound: false, 
             ExpCT: nil,
         }, {
             Name: "one node not found - path too long", 
-            TargetPath: "single/default",
-            CT: SingleNode,
+            TargetPath: "t1/t9",
             ExpFound: false, 
             ExpCT: nil,
         },{
             Name: "multi node found", 
-            TargetPath: "multi/node1",
-            CT: MultiNode,
+            TargetPath: "t2/t3",
             ExpFound: true, 
-            ExpCT: ChainNode1,
+            ExpCT: &t3,
         },
         {
             Name: "multi node found - down the path", 
-            TargetPath: "multi/node1/node2",
-            CT: MultiNode,
+            TargetPath: "t2/t3/t6",
             ExpFound: true, 
-            ExpCT: ChainNode2,
+            ExpCT: &t6,
         }, {
             Name: "one node not found - node exists but not on the path", 
-            TargetPath: "multi/node2",
-            CT: MultiNode,
+            TargetPath: "t2/t6",
             ExpFound: false, 
             ExpCT: nil,
         },
     }
-
-    prepSimpleCategories()
+    
 
     for _, tc := range tcs {
         t.Logf("[TestFindCategoryWithPath] Running %v", tc.Name)
-        actualCT, actualFound := tc.CT.FindCategoryWithPath(tc.TargetPath)
+        actualCT, actualFound := t0.FindCategoryWithPath(tc.TargetPath)
         if !tc.ExpFound {
             if actualFound {
                 t.Fatal("Should not find target, but actually found")
             }
             continue
         }
+
         if !actualFound {
             t.Fatalf("Expected %v, actually not found", tc.ExpCT)
         }

@@ -73,6 +73,7 @@ func LoadProfile() error {
 // writes to profile yaml file if user made updates
 func UnloadProfile() error {
     if currProfile.updated {
+        debug.Tracef("Updating profile %v ...", currProfile.Name)
         dir := config.ProfileDir()
         profilePath := path.Join(dir, currProfile.Name+".yaml")
         err := currProfile.WriteBack(profilePath)
@@ -98,6 +99,9 @@ func FindCategory(name string) (c *Category, exists bool){
 
 // Add a new category. This would alter user's profile
 func AddCategoryToProfile(path string) error {
+    if _, err := currProfile.Category.AddCategory(path); err != nil {
+        return err
+    }
     currProfile.updated = true
     return nil 
 }
