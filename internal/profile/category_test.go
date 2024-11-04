@@ -7,8 +7,6 @@ import (
 )
 
 func TestCategoryAdd(t *testing.T) {
-    prepComplexCategories()
-    
     tcs := []struct {
         Name string 
         NewPath string 
@@ -32,8 +30,14 @@ func TestCategoryAdd(t *testing.T) {
             Name: "[TestCategoryAdd] Test add failed as duplicate category", 
             NewPath: "t1",
             Success: false,
+        }, {
+            Name: "[TestCategoryAdd] Test add at root level",
+            NewPath: "t0",
+            Success: true,
         },
     }
+
+    prepComplexCategories()
     
     for _, tc := range tcs {
         t.Logf("[TestCategoryAdd] running %v", tc.Name)

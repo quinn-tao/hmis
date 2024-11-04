@@ -1,6 +1,6 @@
 currency : cad 
 mode  : pessimistic
-limit : 5000
+limit : 5,000.00
 name: default
 
 category: 

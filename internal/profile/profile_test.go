@@ -2,7 +2,6 @@ package profile_test
 
 import (
 	"os"
-	"path"
 	"testing"
 
 	"github.com/quinn-tao/hmis/v1/internal/profile"
@@ -11,16 +10,36 @@ import (
 // Test that encoding a profile should decode to the same profile
 func TestProfileEncodeDecode(t *testing.T) {
     testProfilePath := "test_profile.yaml"
+
     var p profile.Profile
-    p.ReadFrom(testProfilePath)
-    tmpPath := path.Join(os.TempDir(), "test_profile.yaml")
-    p.WriteBack(tmpPath)
+	testInputFile, err := os.Open(testProfilePath)
+	if err != nil {
+        t.Fatalf(err.Error())
+	}
+	defer testInputFile.Close()
+
+    err = p.ReadFrom(testInputFile)
+    t.Logf("%v", p) 
+    if err != nil {
+        t.Fatalf("Error while reading profile: %v", err)
+    }
+
+    file, err := os.CreateTemp("", "test_profile.yaml")
+    err = p.WriteBack(file)
+    if err != nil {
+        t.Fatalf("Error while writing profile: %v", err)
+    }
+    file.Close()
+
     var p1 profile.Profile
-    p1.ReadFrom(tmpPath)
+    file, err = os.Open(file.Name())
+    err = p1.ReadFrom(file)
+    if err != nil {
+        t.Fatalf("Error while reading from tmp profile: %v", err)
+    }
     cmpProfile(t, &p, &p1)
 }
 
-// Only used for testing purpose
 func cmpProfile(t *testing.T, exp *profile.Profile, act *profile.Profile) {
     if exp.Name != act.Name {
         t.Fatalf("Expected name %v, got name %v", exp.Name, act.Name)

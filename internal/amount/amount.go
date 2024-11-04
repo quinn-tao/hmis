@@ -19,6 +19,7 @@ var (
     ErrAmountTooLarge = errors.New("Amount too large")
 )
 
+/// Parsers a new RawAmountVal from string 
 func NewFromString(amountStr string) (RawAmountVal, error) {
     tokens := strings.Split(amountStr, ".")
 
@@ -85,6 +86,7 @@ func (r RawAmountVal) MarshalYAML() (interface{}, error){
     return r.String(), nil
 }
 
+// Parsers hi (dollar) parts of an amount value from string
 func getHi(hiStr string) (int64, error) {
     tokens := strings.Split(hiStr, ",")
     

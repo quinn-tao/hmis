@@ -48,6 +48,16 @@ func (f Frequency) String() string {
     return freqEnumToFlag[f]
 }
 
+type Recurrence struct {
+    Freq Frequency
+    Amount amount.RawAmountVal
+    Date time.Time
+}
+
+func (r Recurrence) String() string {
+    return fmt.Sprintf("%v %v", r.Freq, r.Amount)
+}
+
 // TODO: logic handling duplicate categories 
 type Category struct {
     Name string
@@ -55,41 +65,47 @@ type Category struct {
     Sub map[string]*Category
 }
 
-type Recurrence struct {
-    Freq Frequency
-    Amount amount.RawAmountVal
-    Date time.Time
-}
-
+// Insert the category into category tree 
+// New category is defined by using a unix-like path, where 
+// the last element of the path is the name of the new category 
 func (c *Category) AddCategory(path string) (*Category, error) {
     pathTokens := strings.Split(path, "/")
     if len(pathTokens) < 1 {
         return nil, ErrInvalidCategoryPath
     }
-    prefixPath := strings.Join(pathTokens[:len(pathTokens)-1], "/") 
+
     newCategoryName := pathTokens[len(pathTokens)-1]
     newCategory := Category{Name:newCategoryName}
+
+    if len(pathTokens) == 1 {
+        err := c.insertSub(&newCategory)                    
+        if err != nil {
+            return nil, err
+        }
+        return &newCategory, nil
+    }
     
+    // Break down new path into <prefix>/<new category name> 
+    prefixPath := strings.Join(pathTokens[:len(pathTokens)-1], "/") 
+
+    // Locate parent category 
     parent, exists := c.FindCategoryWithPath(prefixPath)
     if !exists {
         return nil, ErrInvalidCategoryPath
     }
     
-    if parent.Sub == nil {
-        parent.Sub = make(map[string]*Category)
+    // Insert new child
+    err := parent.insertSub(&newCategory)
+    if err != nil {
+        return nil, err
     }
-    _, exists = parent.Sub[newCategoryName]
-    if exists {
-        return nil, ErrAlreadyExists
-    }
-
-    parent.Sub[newCategoryName] = &newCategory
+    
     return &newCategory, nil
 }
 
 // Find Category by searching particular path
 func (c *Category) FindCategoryWithPath(path string) (retc *Category, exists bool) {
-    tokens := strings.SplitN(path, "/",2)
+    tokens := strings.SplitN(path, "/", 2)
 
     if c.Sub == nil || len(c.Sub) == 0 {
         return nil, false
@@ -146,7 +162,7 @@ func (c Category) String() string {
     }
     indent -= 1
     if c.Recurr != nil {
-        str += ": " + string(c.Recurr.Freq)
+        str += fmt.Sprintf(": %v", c.Recurr)
     }
     return str
 }
@@ -184,4 +200,16 @@ func (c *Category) marshalYAML() (interface{}, error) {
         yml[c.Name] = append(yml[c.Name], subYml)
     }  
     return yml, nil
+}
+
+func (c *Category) insertSub(sub *Category) error {
+    if c.Sub == nil {
+        c.Sub = make(map[string]*Category, 1)
+    }
+    _, exists := c.Sub[sub.Name]
+    if exists {
+        return ErrAlreadyExists
+    }
+    c.Sub[sub.Name] = sub
+    return nil
 }

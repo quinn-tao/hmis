@@ -1,13 +1,14 @@
 package profile
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 	"time"
 
 	"github.com/quinn-tao/hmis/v1/internal/amount"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/display"
-	"github.com/quinn-tao/hmis/v1/internal/util"
 )
 
 var categoryParser = Parser{parseCategory}
@@ -37,7 +38,7 @@ func categoryTreeMake(p *Profile, content interface{}) *Category {
         display.Errorf("Error parsing category {%v}", content)
         return nil
     case string:
-        return categoryTreeMakeLeaf(p, content.(string))
+        return categoryTreeMakeLeaf(content.(string))
     case map[string]interface{}:
         var c Category
         c.Sub = make(map[string]*Category)
@@ -60,36 +61,44 @@ func categoryTreeMake(p *Profile, content interface{}) *Category {
     return nil
 }
 
-func categoryTreeMakeLeaf(p *Profile, content string) *Category {
+func categoryTreeMakeLeaf(content string) *Category {
     var category Category
     tokens := strings.Split(content, " ")
     
-    getName := func(token string) {
+    getName := func(token string) error {
         category.Name = token
+        return nil
     }
 
-    getAmount := func(token string) {
-        // TODO: convert dollar amount to cents
+    getAmount := func(token string) error {
         amt, err := amount.NewFromString(token)
-        util.CheckError(err)
+        if err != nil {
+            return err
+        }
         category.Recurr = &Recurrence{Amount: amt}
+        return nil
     }
 
-    getFreq := func(token string) {
+    getFreq := func(token string) error {
         freq, ok := freqFlagToEnum[token]
         if !ok {
-            display.Errorf("Error parsing frequency setting in %v", content)
+            errMsg := fmt.Sprintf("Error parsing frequency setting in %v", content)
+            return errors.New(errMsg)
         }
         category.Recurr.Freq = freq
+        return nil
     }
 
-    getDate := func(token string) {
+    getDate := func(token string) error {
         date, err := time.Parse(time.DateOnly, token)
-        util.CheckError(err)
+        if err != nil {
+            return err
+        }
         debug.Tracef("%v", date)
+        return nil
     }
 
-    getters := []func(string) {
+    getters := []func(string)(error) {
         getName,
         getAmount,
         getFreq,
@@ -100,8 +109,12 @@ func categoryTreeMakeLeaf(p *Profile, content string) *Category {
         if i >= len(getters) {
             display.Errorf("Too many arguments parsing %v", content)
         } 
-        getters[i](token)  
+        err := getters[i](token)  
+        if err != nil {
+            display.Error(err.Error())
+        }
     }
+
     return &category
 }
 
