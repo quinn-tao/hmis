@@ -185,15 +185,20 @@ func Dump() {
 	t.Style().Options.SeparateRows = false
 	t.Style().Options.SeparateColumns = false
 	t.Style().Options.DrawBorder = false
+    t.SetTitle("Profile Information")
 
 	t.AppendRows([]table.Row{
-		{"Current Profile:", currProfile},
+		{"Name", currProfile.Name},
+        {"Mode", currProfile.Mode},
+		{"Limit", currProfile.Limit},
+        {"Categories", currProfile.Category},
 	})
+
 	t.AppendSeparator()
+
 	t.AppendRows([]table.Row{
 		{"List of Available Profiles:"},
 	})
-
 	for _, profile := range currProfile.profiles {
 		t.AppendRows([]table.Row{
 			{profile},

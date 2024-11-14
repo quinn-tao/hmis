@@ -156,7 +156,7 @@ func (c Category) String() string {
     for name, sc := range(c.Sub) {
         prefix := ""
         for i := 0; i < indent; i++ {
-            prefix += "  "
+            prefix += "        "
         }
         str += "\n" + prefix + name + sc.String()
     }
