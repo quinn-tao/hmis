@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/quinn-tao/hmis/v1/internal/amount"
+	"github.com/quinn-tao/hmis/v1/internal/debug"
 )
 
 var (
@@ -99,7 +100,7 @@ func (c *Category) AddCategory(path string) (*Category, error) {
     if err != nil {
         return nil, err
     }
-    
+
     return &newCategory, nil
 }
 
@@ -173,6 +174,8 @@ func (c *Category) MarshalYAML() (interface{}, error) {
         return  nil, err
     }
     content, exists := yml.(map[string][]interface{})["category"]
+    
+    debug.Tracef("%v", c) 
     if !exists {
         return nil, errors.New("Marshalled category tree does not contain 'category' key")
     } 
@@ -199,6 +202,7 @@ func (c *Category) marshalYAML() (interface{}, error) {
         }
         yml[c.Name] = append(yml[c.Name], subYml)
     }  
+    debug.Tracef("%v == %v\n", c.Name, yml[c.Name]) 
     return yml, nil
 }
 

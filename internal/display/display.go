@@ -8,7 +8,6 @@ import (
 	"github.com/quinn-tao/hmis/v1/internal/util"
 )
 
-
 const (
     red = "\033[0;31m"
     green = "\033[0;33m"
@@ -47,7 +46,7 @@ func DialogYesNo(question string) bool {
         } else if res == "n\n" {
             return false
         } else {
-            fmt.Println("[Y/n]\n")
+            fmt.Println("[Y/n]")
         }
     }
 }
