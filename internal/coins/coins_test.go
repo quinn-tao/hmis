@@ -1,9 +1,9 @@
-package amount_test
+package coins_test
 
 import (
 	"testing"
 
-	"github.com/quinn-tao/hmis/v1/internal/amount"
+	"github.com/quinn-tao/hmis/v1/internal/coins"
 )
 
 func TestStringToCents(t *testing.T) {
@@ -62,36 +62,36 @@ func TestStringToCents(t *testing.T) {
             Name: "Invalid amount with too many cent digits",
             AmountStr: "100.023",
             ExpAmountCents: 10000,
-            ExpErr: amount.ErrInvalidAmount,
+            ExpErr: coins.ErrInvalidAmount,
         }, {
             Name: "Invalid amount with wrong place of ','",
             AmountStr: "1,00.023",
             ExpAmountCents: 0,
-            ExpErr: amount.ErrInvalidAmount,
+            ExpErr: coins.ErrInvalidAmount,
         }, {
             Name: "Invalid amount with 0 and ',' at beginning of string",
             AmountStr: "0,100.023",
             ExpAmountCents: 0, 
-            ExpErr: amount.ErrInvalidAmount,
+            ExpErr: coins.ErrInvalidAmount,
         }, {
             Name: "Invalid amount with ',' at beginning of string",
             AmountStr: ",100.023",
             ExpAmountCents: 0, 
-            ExpErr: amount.ErrInvalidAmount,
+            ExpErr: coins.ErrInvalidAmount,
         },
     }
 
     for _, tc := range tcs {
         t.Logf("[TestStringToCents] running %v", tc.Name)
-        actAmountCents, actErr := amount.NewFromString(tc.AmountStr)
+        actAmountCents, actErr := coins.NewFromString(tc.AmountStr)
         if tc.ExpErr != nil {
             if actErr == nil {
                 t.Fatalf("Expected error %v, got %v", tc.ExpErr, actErr)
             }
             return
         }
-        if actAmountCents != amount.RawAmountVal(tc.ExpAmountCents) {
-            t.Fatalf("Expected %v, got %v", amount.RawAmountVal(tc.ExpAmountCents), actAmountCents)
+        if actAmountCents != coins.RawAmountVal(tc.ExpAmountCents) {
+            t.Fatalf("Expected %v, got %v", coins.RawAmountVal(tc.ExpAmountCents), actAmountCents)
         }
     }
 }
@@ -140,7 +140,7 @@ func TestCentsToString(t *testing.T) {
     for _, tc := range tcs {
         t.Logf("[TestCentsToString] Running %v", tc.Name)
 
-        ActualAmountStr := amount.RawAmountVal(tc.AmountCents).String()
+        ActualAmountStr := coins.RawAmountVal(tc.AmountCents).String()
         if ActualAmountStr != tc.ExpAmountStr {
             t.Fatalf("Expected %v, Got %v", tc.ExpAmountStr, ActualAmountStr)
         }

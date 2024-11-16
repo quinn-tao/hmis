@@ -1,4 +1,4 @@
-package amount
+package coins
 
 import "golang.org/x/text/currency"
 

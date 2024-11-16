@@ -1,7 +1,7 @@
 package profile
 
 import (
-	"github.com/quinn-tao/hmis/v1/internal/amount"
+	"github.com/quinn-tao/hmis/v1/internal/coins"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/util"
 	"golang.org/x/text/currency"
@@ -27,7 +27,7 @@ func parseCurrency(p *Profile, yamlRoot map[interface{}]interface{}) error {
     
     unit, err := currency.ParseISO(code)
     util.CheckError(err) 
-    p.Currency = amount.Currency(unit)
+    p.Currency = coins.Currency(unit)
     debug.Tracef("Currency parsed %v", p.Currency) 
     return err
 }

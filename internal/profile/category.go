@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/quinn-tao/hmis/v1/internal/amount"
+	"github.com/quinn-tao/hmis/v1/internal/coins"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 )
 
@@ -51,7 +51,7 @@ func (f Frequency) String() string {
 
 type Recurrence struct {
     Freq Frequency
-    Amount amount.RawAmountVal
+    Amount coins.RawAmountVal
     Date time.Time
 }
 
@@ -217,3 +217,4 @@ func (c *Category) insertSub(sub *Category) error {
     c.Sub[sub.Name] = sub
     return nil
 }
+

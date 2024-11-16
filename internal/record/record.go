@@ -3,12 +3,12 @@ package record
 import (
 	"fmt"
 
-	"github.com/quinn-tao/hmis/v1/internal/amount"
+	"github.com/quinn-tao/hmis/v1/internal/coins"
 )
 
 type Record struct {
     Id int 
-    Amount amount.RawAmountVal
+    Amount coins.RawAmountVal
     Name string 
     Category string
 }
