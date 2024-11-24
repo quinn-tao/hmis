@@ -60,7 +60,7 @@ func InsertRec(cents coins.RawAmountVal, name string, category string) error {
 	return err
 }
 
-func GetAllRec() ([]record.Record, error) {
+func GetAllRecords() ([]record.Record, error) {
 	stmt := "select * from rec"
 	rows, err := Persistor.db.Query(stmt)
 	if err != nil {
@@ -76,6 +76,24 @@ func GetAllRec() ([]record.Record, error) {
 		retv = append(retv, rec)
 	}
 	return retv, nil
+}
+
+// Get sum of all records as a record
+func GetSumRecord() (record.Record, error) {
+	stmt := "select sum(cents), count(*) from rec"
+	var sum int64
+    var cnt int
+	err := Persistor.db.QueryRow(stmt).Scan(&sum, &cnt)
+	if err != nil {
+		return record.Record{}, err
+	}
+
+	return record.Record{
+		Id: cnt,
+        Name: "Sum", 
+        Amount: coins.RawAmountVal(sum),
+        Category: "/",
+	}, nil
 }
 
 func RemoveRec(id int) error {
