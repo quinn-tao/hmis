@@ -10,11 +10,10 @@ var profileCmd = &cobra.Command{
 	Use:   "profile",
 	Short: "Managing budgeting profiles",
 	Run: func(cmd *cobra.Command, args []string) {
-        profile.Dump()
+		profile.Dump()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(profileCmd)
 }
-

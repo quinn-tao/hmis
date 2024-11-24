@@ -11,24 +11,23 @@ var currencyParser = Parser{parseCurrency}
 var currencyKey = "currency"
 
 func parseCurrency(p *Profile, yamlRoot map[interface{}]interface{}) error {
-    var err error
+	var err error
 
-    val, exists := yamlRoot[currencyKey]
-    if !exists {
-        debug.Tracef("Currency not found in profile. Skipping...")     
-        return parseError(currencyKey)
-    }
+	val, exists := yamlRoot[currencyKey]
+	if !exists {
+		debug.Tracef("Currency not found in profile. Skipping...")
+		return parseError(currencyKey)
+	}
 
-    code, ok := val.(string)
-    if !ok {
-        debug.Tracef("Currency parser error. Skipping... ")     
-        return parseError(currencyKey)
-    }
-    
-    unit, err := currency.ParseISO(code)
-    util.CheckError(err) 
-    p.Currency = coins.Currency(unit)
-    debug.Tracef("Currency parsed %v", p.Currency) 
-    return err
+	code, ok := val.(string)
+	if !ok {
+		debug.Tracef("Currency parser error. Skipping... ")
+		return parseError(currencyKey)
+	}
+
+	unit, err := currency.ParseISO(code)
+	util.CheckError(err)
+	p.Currency = coins.Currency(unit)
+	debug.Tracef("Currency parsed %v", p.Currency)
+	return err
 }
-

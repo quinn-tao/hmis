@@ -33,7 +33,7 @@ func init() {
 	recordLsCmd.Flags().IntVarP(&recIdFlag, "id", "i", -1, "Specify id")
 	recordLsCmd.Flags().StringVarP(&recNameFlag,
 		"name", "n", "", "Fuzzy matching by name")
-	recordLsCmd.Flags().StringVarP(&recCategoryFlag, 
-        "category", "c", "", "Specify category")
+	recordLsCmd.Flags().StringVarP(&recCategoryFlag,
+		"category", "c", "", "Specify category")
 	recordCmd.AddCommand(recordLsCmd)
 }

@@ -8,13 +8,19 @@ import (
 var statCmd = &cobra.Command{
 	Use:   "stat",
 	Short: "Show current budget usage report",
-	Run: parserStatCmd,
+	Run:   parserStatCmd,
 }
 
 func parserStatCmd(cmd *cobra.Command, args []string) {
-    profile.Dump()
+	profile.Dump()
 }
 
 func init() {
+	statCmd.Flags().BoolP("detail", "d", false, "Print detailed expense report.")
+	statCmd.Flags().StringP("start", "s", "This Month",
+		"Specify status report start date")
+	statCmd.Flags().StringP("end", "e", "Present",
+		"Specify status report end date")
+
 	rootCmd.AddCommand(statCmd)
 }

@@ -13,17 +13,17 @@ import (
 var recordRmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove an expense record",
-    Args: cobra.ExactArgs(1),
-	Run: parseRecordRmArgs,
+	Args:  cobra.ExactArgs(1),
+	Run:   parseRecordRmArgs,
 }
 
 func parseRecordRmArgs(cmd *cobra.Command, args []string) {
-    recId, err := strconv.Atoi(args[0])
-    util.CheckErrorf(err, "Error parsing amount")
-    debug.Tracef("cmd: rec/rm %v", recId)
+	recId, err := strconv.Atoi(args[0])
+	util.CheckErrorf(err, "Error parsing amount")
+	debug.Tracef("cmd: rec/rm %v", recId)
 
-    err = db.RemoveRec(recId)    
-    util.CheckErrorf(err, "Error removing rec")
+	err = db.RemoveRec(recId)
+	util.CheckErrorf(err, "Error removing rec")
 }
 
 func init() {

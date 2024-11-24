@@ -30,15 +30,15 @@ import (
 
 var cfgFile string
 
-// Main application command 
+// Main application command
 var rootCmd = &cobra.Command{
 	Use:   "hmis",
 	Short: "(H)ow (M)uch (I) (S)pent?",
-    Long: "hmis is a command-line tool for managing personal budgetting and expenses",
-    PersistentPostRun: func(cmd *cobra.Command, args []string) {
-        debug.Tracef("Closing profile")
-        profile.UnloadProfile()
-    },
+	Long:  "hmis is a command-line tool for managing personal budgetting and expenses",
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		debug.Tracef("Closing profile")
+		profile.UnloadProfile()
+	},
 }
 
 func Execute() {
@@ -51,7 +51,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.hmis.yaml)")
-    debug.SetTraceFlag(rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Enable application tracing"))
+	debug.SetTraceFlag(rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Enable application tracing"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -66,26 +66,26 @@ func initConfig() {
 		cfgDir, err := os.UserConfigDir()
 		cobra.CheckErr(err)
 
-        hmisDir := "hmis" 
-        
-        // Application config 
+		hmisDir := "hmis"
+
+		// Application config
 		viper.AddConfigPath(homeDir)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".hmis")
-        
-        // Application config default values
+
+		// Application config default values
 		viper.SetDefault("profile.dir", path.Join(cfgDir, hmisDir, "profile"))
 		viper.SetDefault("profile.name", "default")
-        viper.SetDefault("storage_location", path.Join(cfgDir, hmisDir, "rec.db"))
+		viper.SetDefault("storage_location", path.Join(cfgDir, hmisDir, "rec.db"))
 	}
 
-    // read in environment variables that match
-	viper.AutomaticEnv() 
+	// read in environment variables that match
+	viper.AutomaticEnv()
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
-    
-    profile.LoadProfile()
+
+	profile.LoadProfile()
 }

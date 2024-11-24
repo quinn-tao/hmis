@@ -5,22 +5,21 @@ import (
 )
 
 func genStringFieldParser(retv *string, key string) Parser {
-    parseFn := func(p *Profile, yamlRoot map[interface{}]interface{}) error {
-        val, exists := yamlRoot[key]
-        if !exists {
-            debug.Tracef("key:%v not found in profile. Skipping...", key)     
-            return parseError(key)
-        }
+	parseFn := func(p *Profile, yamlRoot map[interface{}]interface{}) error {
+		val, exists := yamlRoot[key]
+		if !exists {
+			debug.Tracef("key:%v not found in profile. Skipping...", key)
+			return parseError(key)
+		}
 
-        strVal, ok := val.(string)
-        if !ok {
-            debug.Tracef("%v parser error. Skipping... ", strVal)     
-            return parseError(key)
-        }
+		strVal, ok := val.(string)
+		if !ok {
+			debug.Tracef("%v parser error. Skipping... ", strVal)
+			return parseError(key)
+		}
 
-        *retv = strVal 
-        return nil
-    }
-    return Parser{parseFn}
+		*retv = strVal
+		return nil
+	}
+	return Parser{parseFn}
 }
-

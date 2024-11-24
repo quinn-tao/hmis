@@ -9,20 +9,20 @@ import (
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/quinn-tao/hmis/v1/config"
-	"github.com/quinn-tao/hmis/v1/internal/amount"
+	"github.com/quinn-tao/hmis/v1/internal/coins"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/util"
 	"gopkg.in/yaml.v3"
 )
 
 type Profile struct {
-	Name        string
-	Limit       amount.RawAmountVal
-	Mode        Mode
-	Currency    amount.Currency
-	Category    *Category
-	profiles    []string
-	updated     bool
+	Name     string
+	Limit    coins.RawAmountVal
+	Mode     Mode
+	Currency coins.Currency
+	Category *Category
+	profiles []string
+	updated  bool
 }
 
 // The current loaded profile
@@ -30,7 +30,7 @@ var currProfile *Profile
 
 // Load current profile
 func LoadProfile() error {
-    var newProfile Profile
+	var newProfile Profile
 	dir := config.ProfileDir()
 
 	debug.Tracef("Loading profile directory %v", dir)
@@ -80,13 +80,13 @@ func UnloadProfile() error {
 		debug.Tracef("Updating profile %v ...", currProfile.Name)
 		dir := config.ProfileDir()
 		profilePath := path.Join(dir, currProfile.Name+".yaml")
-        file, err := os.OpenFile(profilePath, os.O_WRONLY|os.O_TRUNC, 0600)
-        if err != nil {
-            return err
-        }
-        defer file.Close()
+		file, err := os.OpenFile(profilePath, os.O_WRONLY|os.O_TRUNC, 0600)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
 
-        debug.Tracef("Writing back to %v", profilePath)
+		debug.Tracef("Writing back to %v", profilePath)
 		err = currProfile.WriteBack(file)
 		util.CheckError(err)
 	}
@@ -110,7 +110,7 @@ func FindCategory(name string) (c *Category, exists bool) {
 
 // Add a new category. This would alter user's profile
 func AddCategoryToProfile(path string) error {
-    debug.Tracef("Adding category %v", path)
+	debug.Tracef("Adding category %v", path)
 	if _, err := currProfile.Category.AddCategory(path); err != nil {
 		return err
 	}
@@ -122,30 +122,30 @@ func AddCategoryToProfile(path string) error {
 //                                 P A R S E R                                    //
 // ****************************************************************************** //
 
-// Read and parse a profile from yaml. 
-// 
-// Parsing logics are defined via list of field parsers. Each individually 
-// load a section of users's budgeting profile from generic 
+// Read and parse a profile from yaml.
+//
+// Parsing logics are defined via list of field parsers. Each individually
+// load a section of users's budgeting profile from generic
 // map[interface{}]interface{}
-// 
+//
 // NOTE: order of these parsers matters as some may depends on others.
 // For instance, recurrent expenses only make sense after currency settings
 // are loaded
 func (p *Profile) ReadFrom(file *os.File) error {
 	debug.Trace("Constructing yaml map ast from %v", file.Name())
 
-    nameParser := genStringFieldParser(&p.Name, "name")
-    var profileFieldParsers = []Parser{
-        nameParser,
-        currencyParser,
-        modeParser,
-        limitParser,
-        categoryParser,
-    }
+	nameParser := genStringFieldParser(&p.Name, "name")
+	var profileFieldParsers = []Parser{
+		nameParser,
+		currencyParser,
+		modeParser,
+		limitParser,
+		categoryParser,
+	}
 
 	decoder := yaml.NewDecoder(file)
 	data := make(map[interface{}]interface{})
-    err := decoder.Decode(data)
+	err := decoder.Decode(data)
 	if err != nil {
 		return err
 	}
@@ -166,7 +166,7 @@ func (p *Profile) WriteBack(file *os.File) error {
 	encoder := yaml.NewEncoder(file)
 	defer encoder.Close()
 
-    err := encoder.Encode(p)
+	err := encoder.Encode(p)
 	if err != nil {
 		return err
 	}
@@ -185,13 +185,13 @@ func Dump() {
 	t.Style().Options.SeparateRows = false
 	t.Style().Options.SeparateColumns = false
 	t.Style().Options.DrawBorder = false
-    t.SetTitle("Profile Information")
+	t.SetTitle("Profile Information")
 
 	t.AppendRows([]table.Row{
 		{"Name", currProfile.Name},
-        {"Mode", currProfile.Mode},
+		{"Mode", currProfile.Mode},
 		{"Limit", currProfile.Limit},
-        {"Categories", currProfile.Category},
+		{"Categories", currProfile.Category},
 	})
 
 	t.AppendSeparator()
@@ -216,4 +216,3 @@ func (p Profile) String() string {
 		p.Category,
 	)
 }
-

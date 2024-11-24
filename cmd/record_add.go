@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/quinn-tao/hmis/v1/internal/amount"
+	"github.com/quinn-tao/hmis/v1/internal/coins"
 	"github.com/quinn-tao/hmis/v1/internal/db"
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/display"
@@ -19,7 +19,7 @@ var recordAddCmd = &cobra.Command{
 }
 
 func parseRecordAddArgs(cmd *cobra.Command, args []string) {
-	recAmount, err := amount.NewFromString(args[0])
+	recAmount, err := coins.NewFromString(args[0])
 	if err != nil {
 		display.Errorf("Error parsing amount:%v", err)
 	}
@@ -30,7 +30,7 @@ func parseRecordAddArgs(cmd *cobra.Command, args []string) {
 
 	_, found := profile.FindCategory(recCategory)
 	if !found {
-	    display.Errorf("Category %v not found", recCategory)
+		display.Errorf("Category %v not found", recCategory)
 	}
 
 	err = db.InsertRec(recAmount, recName, recCategory)

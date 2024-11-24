@@ -6,17 +6,17 @@ var traceEnabled *bool
 var logger = log.Default()
 
 func Trace(msg string, val ...interface{}) {
-    if traceEnabled != nil && *traceEnabled {
-        logger.Println(msg)
-    }
+	if traceEnabled != nil && *traceEnabled {
+		logger.Println(msg)
+	}
 }
 
 func Tracef(msg string, val ...interface{}) {
-    if traceEnabled != nil && *traceEnabled {
-        logger.Printf(msg, val...)
-    }
+	if traceEnabled != nil && *traceEnabled {
+		logger.Printf(msg, val...)
+	}
 }
 
 func SetTraceFlag(flag *bool) {
-    traceEnabled = flag
+	traceEnabled = flag
 }

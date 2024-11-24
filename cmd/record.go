@@ -12,16 +12,16 @@ import (
 
 // recordCmd represents the record command
 var recordCmd = &cobra.Command{
-	Use:   "rec [COMMAND]",
-	Short: "Managing expense records",
-    TraverseChildren: true, 
-    PersistentPreRun: func(cmd *cobra.Command, args []string) {
-        db.PersistorInit(config.StorageLocation())
-    },
-    PersistentPostRun: func(cmd *cobra.Command, args []string) {
-        profile.UnloadProfile()
-        db.PersistorClose()
-    },
+	Use:              "rec [COMMAND]",
+	Short:            "Managing expense records",
+	TraverseChildren: true,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		db.PersistorInit(config.StorageLocation())
+	},
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		profile.UnloadProfile()
+		db.PersistorClose()
+	},
 }
 
 func init() {
