@@ -1,4 +1,4 @@
-package chronic
+package chrono
 
 import (
 	"errors"

@@ -1,11 +1,11 @@
-package chronic_test
+package chrono_test
 
 import (
 	"fmt"
 	"testing"
 	"time"
 
-	"github.com/quinn-tao/hmis/v1/internal/chronic"
+	"github.com/quinn-tao/hmis/v1/internal/chrono"
 )
 
 const (
@@ -107,7 +107,7 @@ func TestParseDateToken(t *testing.T) {
 	for _, tc := range tcs {
 		t.Logf("Running %v", tc.Name)
 		for _, token := range tc.InputTokens {
-			actDate, actErr := chronic.ParseDateToken(token)
+			actDate, actErr := chrono.ParseDateToken(token)
 			if actErr != nil && !tc.ExpErr {
 				t.Fatalf("Parsing %v. Expect no error, got %v",
 					token, actErr)
