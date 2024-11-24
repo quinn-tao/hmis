@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/quinn-tao/hmis/v1/internal/db"
+	"github.com/quinn-tao/hmis/v1/internal/display"
+	"github.com/quinn-tao/hmis/v1/internal/display/cli"
 	"github.com/quinn-tao/hmis/v1/internal/util"
 	"github.com/spf13/cobra"
 )
@@ -19,10 +19,22 @@ func parseRecordLsArgs(cmd *cobra.Command, args []string) {
 	// TODO: [record ls] support filtering/fuzzy matching in names
 	recs, err := db.GetAllRec()
 	util.CheckErrorf(err, "Cannot get records from db:%v", recs)
-	for _, rec := range recs {
-		// TODO: this should be in display module
-		fmt.Println(rec)
-	}
+    
+    tbl := cli.NewTable("Records", 
+        cli.Column{Name: "id", Required:true}, 
+        cli.Column{Name: "amount", Required:true}, 
+        cli.Column{Name: "name", Required: true}, 
+        cli.Column{Name: "category", Required: true})
+
+    for row, rec := range recs {
+        err := tbl.AppendRow(rec)
+        if err != nil {
+            // TODO: failures could corrupt object 
+            display.Errorf("Cannot display row %v", row)
+        }
+    }
+
+    tbl.Render()
 }
 
 var recIdFlag int
