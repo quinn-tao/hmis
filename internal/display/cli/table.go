@@ -56,12 +56,12 @@ func NewTable(title string, columns ...Column) *Table {
 }
 
 func (tbl *Table) AppendRow(obj interface{}) error {
-    _, err := tbl.appendRow(obj)
-    if err != nil {
-        return err
-    }
+	_, err := tbl.appendRow(obj)
+	if err != nil {
+		return err
+	}
 
-    return nil
+	return nil
 }
 
 // Renders the table to Stdout
@@ -70,21 +70,19 @@ func (tbl *Table) Render() {
 }
 
 func (tbl *Table) AppendRowWithHighlight(obj interface{}) error {
-    tbl.writer.AppendSeparator()
-    row, err := tbl.appendRow(obj)
-    if err != nil {
-        return err
-    }
-    
-    tbl.writer.SetRowPainter(func(currRow table.Row) text.Colors {
-        if reflect.DeepEqual(row, currRow) {
-            return text.Colors{text.FgCyan}
-        }
-        return text.Colors{
+	tbl.writer.AppendSeparator()
+	row, err := tbl.appendRow(obj)
+	if err != nil {
+		return err
+	}
 
-        }
-    })
-    return nil
+	tbl.writer.SetRowPainter(func(currRow table.Row) text.Colors {
+		if reflect.DeepEqual(row, currRow) {
+			return text.Colors{text.FgCyan}
+		}
+		return text.Colors{}
+	})
+	return nil
 }
 
 // Append an row mapped from an arbitrary object of which
@@ -116,8 +114,7 @@ func (tbl *Table) appendRow(obj interface{}) (table.Row, error) {
 	if setColumns&tbl.mustSetColunms != tbl.mustSetColunms {
 		return nil, RowInsertionError
 	}
-        
-	tbl.writer.AppendRow(row)
-	return row ,nil
-}
 
+	tbl.writer.AppendRow(row)
+	return row, nil
+}

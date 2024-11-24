@@ -82,17 +82,17 @@ func GetAllRecords() ([]record.Record, error) {
 func GetSumRecord() (record.Record, error) {
 	stmt := "select sum(cents), count(*) from rec"
 	var sum int64
-    var cnt int
+	var cnt int
 	err := Persistor.db.QueryRow(stmt).Scan(&sum, &cnt)
 	if err != nil {
 		return record.Record{}, err
 	}
 
 	return record.Record{
-		Id: cnt,
-        Name: "Sum", 
-        Amount: coins.RawAmountVal(sum),
-        Category: "/",
+		Id:       cnt,
+		Name:     "Sum",
+		Amount:   coins.RawAmountVal(sum),
+		Category: "/",
 	}, nil
 }
 

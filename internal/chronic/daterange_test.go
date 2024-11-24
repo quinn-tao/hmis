@@ -110,13 +110,13 @@ func TestParseDateToken(t *testing.T) {
 			actDate, actErr := chronic.ParseDateToken(token)
 			if actErr != nil && !tc.ExpErr {
 				t.Fatalf("Parsing %v. Expect no error, got %v",
-                    token, actErr)
+					token, actErr)
 			}
 
-            if actErr == nil && tc.ExpErr {
-				t.Fatalf("Parsing %v. Expect error; got nil and parsed %v", 
-                    token, actDate)
-            }
+			if actErr == nil && tc.ExpErr {
+				t.Fatalf("Parsing %v. Expect error; got nil and parsed %v",
+					token, actDate)
+			}
 
 			if !isSameDate(actDate, tc.ExpDate) {
 				t.Fatalf("Parsing %v. Expecting %v, got %v",

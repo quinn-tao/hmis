@@ -20,10 +20,10 @@ func parseRecordLsArgs(cmd *cobra.Command, args []string) {
 	recs, err := db.GetAllRecords()
 	util.CheckErrorf(err, "Cannot get records from db:%v", recs)
 
-    sum, err := db.GetSumRecord()
-    if err != nil {
-        display.Errorf("Cannot get sum: %v", err)
-    }
+	sum, err := db.GetSumRecord()
+	if err != nil {
+		display.Errorf("Cannot get sum: %v", err)
+	}
 
 	tbl := cli.NewTable("Records",
 		cli.Column{Name: "id", Required: true},
@@ -39,7 +39,7 @@ func parseRecordLsArgs(cmd *cobra.Command, args []string) {
 		}
 	}
 
-    tbl.AppendRowWithHighlight(sum)
+	tbl.AppendRowWithHighlight(sum)
 	tbl.Render()
 }
 

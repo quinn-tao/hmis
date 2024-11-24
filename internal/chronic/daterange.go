@@ -152,35 +152,35 @@ func parseDateUsingSpecialIdentifiers(strDateRangeToken string) (time.Time, erro
 func parseDateUsingDateFmt(strDateRangeToken string) (time.Time, error) {
 	now := time.Now()
 
-    // Specify what needs to be auto completed to current time value 
-    // when user use date format
-    const (
-        complete = iota
-        missingYY
-        missingYYMM
-    )
-    type DateFmtAutoCompleteType int
+	// Specify what needs to be auto completed to current time value
+	// when user use date format
+	const (
+		complete = iota
+		missingYY
+		missingYYMM
+	)
+	type DateFmtAutoCompleteType int
 
-    formatters := map[string]DateFmtAutoCompleteType{
-        time.DateOnly: complete,
-        "06-01-02": complete,
-        "01-02": missingYY,
-        "01/02": missingYY,
-        "01/02/06": complete,
-        "01/02/2006": complete,
-        "01": missingYYMM,
-    }
+	formatters := map[string]DateFmtAutoCompleteType{
+		time.DateOnly: complete,
+		"06-01-02":    complete,
+		"01-02":       missingYY,
+		"01/02":       missingYY,
+		"01/02/06":    complete,
+		"01/02/2006":  complete,
+		"01":          missingYYMM,
+	}
 
 	for fm, autoCompletType := range formatters {
 		t, err := time.Parse(fm, strDateRangeToken)
 		if err == nil {
-            switch autoCompletType {
-            case missingYYMM:
-                t = t.AddDate(0, int(now.Month()) - 1, 0) 
-                fallthrough
-            case missingYY:
-                t = t.AddDate(now.Year(), 0, 0)
-            } 
+			switch autoCompletType {
+			case missingYYMM:
+				t = t.AddDate(0, int(now.Month())-1, 0)
+				fallthrough
+			case missingYY:
+				t = t.AddDate(now.Year(), 0, 0)
+			}
 
 			return t, nil
 		}
@@ -225,7 +225,7 @@ func parseDateUsingRelativeDates(strDateRangeToken string) (time.Time, error) {
 		if err != nil {
 			return now, newInvalidValErr()
 		}
-        
+
 		return now.AddDate(0, 0, (0 - relativeDays)), nil
 	}
 
