@@ -68,6 +68,9 @@ type Category struct {
 	Sub    map[string]*Category
 }
 
+// Category APIs 
+// ================================================================================
+
 // Insert the category into category tree
 // New category is defined by using a unix-like path, where
 // the last element of the path is the name of the new category
@@ -138,6 +141,38 @@ func (c *Category) FindCategoryRecursive(name string) (retc *Category, exists bo
 	}
 	return nil, false
 }
+
+type CategorySelector func(* Category) bool 
+var CategorySelectAll CategorySelector = func(c *Category) bool {return true}
+
+type CategoryAccumulator func(* Category, interface{}) interface{} 
+
+// Visit Category Tree and apply selector and/or accumulator 
+// Selected categories and Accumulated Values are returned 
+// If selector is nil, then all Categories are selected 
+// If accumulator is nil, then nil will be returned as accumulated value
+func (c *Category) Visit(selector CategorySelector, 
+    accumulator CategoryAccumulator, currAcc interface{}) ([]*Category, interface{}) {
+    var sel []*Category
+    
+    if selector == nil || selector(c) {
+        sel = []*Category{c}
+    }
+    
+    acc := accumulator(c, currAcc)
+    for _, sub := range c.Sub {
+        subSel, subAcc := sub.Visit(selector, accumulator, acc)
+        sel = append(sel, subSel...)
+        acc = subAcc
+    }
+
+    debug.Tracef("visiting %v acc %v", c, acc)
+    
+    return sel, acc
+}
+
+// Utilities 
+// ================================================================================
 
 func (this *Category) Equals(other *Category) bool {
 	if this.Name != other.Name {
