@@ -29,12 +29,12 @@ func parseRecordLsArgs(cmd *cobra.Command, args []string) {
 		cli.Column{Name: "id", Required: true},
 		cli.Column{Name: "amount", Required: true},
 		cli.Column{Name: "name", Required: true},
-		cli.Column{Name: "category", Required: true})
+		cli.Column{Name: "category", Required: true},
+        cli.Column{Name: "date", Required: true},)
 
 	for row, rec := range recs {
 		err := tbl.AppendRow(rec)
 		if err != nil {
-			// TODO: failures could corrupt object
 			display.Errorf("Cannot display row %v", row)
 		}
 	}
