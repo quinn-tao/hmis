@@ -14,6 +14,10 @@ import (
 // 'hi' is the dollor part; 'lo' is the cent part
 type RawAmountVal int64
 
+const (
+    InvalidRawAmountVal = RawAmountVal(0)
+)
+
 var (
 	ErrInvalidAmount  = errors.New("Invalid amount string")
 	ErrAmountTooLarge = errors.New("Amount too large")

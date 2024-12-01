@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"strings"
+    "errors"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/quinn-tao/hmis/v1/config"
@@ -13,6 +14,10 @@ import (
 	"github.com/quinn-tao/hmis/v1/internal/debug"
 	"github.com/quinn-tao/hmis/v1/internal/util"
 	"gopkg.in/yaml.v3"
+)
+
+var (
+    ErrNoProfileLoaded = errors.New("No current profile loaded")
 )
 
 type Profile struct {
@@ -27,6 +32,16 @@ type Profile struct {
 
 // The current loaded profile
 var currProfile *Profile
+
+// Profile APIs 
+// ===========================================================================
+
+func GetCurrentProfile() (*Profile, error){
+    if currProfile == nil {
+        return nil, ErrNoProfileLoaded
+    }
+    return currProfile, nil
+}
 
 // Load current profile
 func LoadProfile() error {
@@ -93,20 +108,12 @@ func UnloadProfile() error {
 	return nil
 }
 
-// ****************************************************************************** //
-//                                 G E T T E R                                    //
-// ****************************************************************************** //
-
 func FindCategory(name string) (c *Category, exists bool) {
 	if c, exists := currProfile.Category.FindCategoryWithPath(name); exists {
 		return c, exists
 	}
 	return currProfile.Category.FindCategoryRecursive(name)
 }
-
-// ****************************************************************************** //
-//                                 S E T T E R                                    //
-// ****************************************************************************** //
 
 // Add a new category. This would alter user's profile
 func AddCategoryToProfile(path string) error {
@@ -118,9 +125,8 @@ func AddCategoryToProfile(path string) error {
 	return nil
 }
 
-// ****************************************************************************** //
-//                                 P A R S E R                                    //
-// ****************************************************************************** //
+// Parsers
+// ===========================================================================
 
 // Read and parse a profile from yaml.
 //
@@ -174,11 +180,9 @@ func (p *Profile) WriteBack(file *os.File) error {
 	return nil
 }
 
-// ****************************************************************************** //
-//                                P R I N T E R                                   //
-// ****************************************************************************** //
+// Printers
+// ===========================================================================
 
-// Pretty-print current status of profiles
 func Dump() {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
