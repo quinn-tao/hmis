@@ -17,7 +17,7 @@ var recordLsCmd = &cobra.Command{
 
 func parseRecordLsArgs(cmd *cobra.Command, args []string) {
 	// TODO: [record ls] support filtering/fuzzy matching in names
-	recs, err := db.GetAllRecords()
+	recs, err := db.GetRecords()
 	util.CheckErrorf(err, "Cannot get records from db:%v", recs)
 
 	sum, err := db.GetSumRecord()
@@ -30,7 +30,7 @@ func parseRecordLsArgs(cmd *cobra.Command, args []string) {
 		cli.Column{Name: "amount", Required: true},
 		cli.Column{Name: "name", Required: true},
 		cli.Column{Name: "category", Required: true},
-        cli.Column{Name: "date", Required: true},)
+		cli.Column{Name: "date", Required: true})
 
 	for row, rec := range recs {
 		err := tbl.AppendRow(rec)
