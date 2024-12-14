@@ -121,36 +121,9 @@ func RecordSearchWithNameRg(rg string) RecordSearchOption {
 }
 
 func GetRecords(options ...RecordSearchOption) ([]record.Record, error) {
-	// Interpret options
-	var opt recordSearchOptions
-	for _, option := range options {
-		option.apply(&opt)
-	}
-
-	specified := func(optString string) bool {
-		return optString != ""
-	}
-
-	var selectors []string
-	if specified(opt.fromDate) {
-		selectors = append(selectors, fmt.Sprintf("recordDate >= '%v'", opt.fromDate))
-	}
-
-	if specified(opt.toDate) {
-		selectors = append(selectors, fmt.Sprintf("recordDate <= '%v'", opt.toDate))
-	}
-
-	if specified(opt.categroy) {
-		selectors = append(selectors, fmt.Sprintf("category = '%v'", opt.categroy))
-	}
-
-	if specified(opt.categroy) {
-		selectors = append(selectors, fmt.Sprintf("name like '%v'", opt.nameMatch))
-	}
-
 	stmt := SearchStmt{
 		From:  "rec",
-		Where: selectors,
+		Where: recordSelector(options...),
 	}
 
 	debug.Tracef("Formatting record search string is %v", stmt)
@@ -180,11 +153,16 @@ func GetRecords(options ...RecordSearchOption) ([]record.Record, error) {
 }
 
 // Get sum of all records as a record
-func GetSumRecord() (record.Record, error) {
-	stmt := "select sum(cents), count(*) from rec"
+func GetSumRecord(options ...RecordSearchOption) (record.Record, error) {
+    stmt := SearchStmt{
+        From: "rec", 
+        Where: recordSelector(options...),
+        Select: []string{"sum(cents)", "count(*)"},
+    }
+
 	var sum int64
 	var cnt int
-	err := Persistor.db.QueryRow(stmt).Scan(&sum, &cnt)
+	err := Persistor.db.QueryRow(stmt.String()).Scan(&sum, &cnt)
 	if err != nil {
 		return record.Record{}, err
 	}
@@ -198,8 +176,39 @@ func GetSumRecord() (record.Record, error) {
 	}, nil
 }
 
+func recordSelector(options ...RecordSearchOption) []string {
+    var opt recordSearchOptions
+	for _, option := range options {
+		option.apply(&opt)
+	}
+
+	specified := func(optString string) bool {
+		return optString != ""
+	}
+
+	var selectors []string
+	if specified(opt.fromDate) {
+		selectors = append(selectors, fmt.Sprintf("recordDate >= '%v'", opt.fromDate))
+	}
+
+	if specified(opt.toDate) {
+		selectors = append(selectors, fmt.Sprintf("recordDate <= '%v'", opt.toDate))
+	}
+
+	if specified(opt.categroy) {
+		selectors = append(selectors, fmt.Sprintf("category = '%v'", opt.categroy))
+	}
+
+	if specified(opt.nameMatch) {
+		selectors = append(selectors, fmt.Sprintf("name like '%v'", opt.nameMatch))
+	}
+
+    return selectors
+}
+
 func RemoveRec(id int) error {
 	stmt := fmt.Sprintf("delete from rec where id = %v", id)
 	_, err := Persistor.db.Exec(stmt)
 	return err
 }
+

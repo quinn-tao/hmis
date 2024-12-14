@@ -48,7 +48,7 @@ func parseRecordLsArgs(cmd *cobra.Command, args []string) {
 	recs, err := db.GetRecords(searchOpt...)
 	util.CheckErrorf(err, "Cannot get records from db:%v", recs)
     
-	sum, err := db.GetSumRecord()
+	sum, err := db.GetSumRecord(searchOpt...)
 	if err != nil {
 		display.Errorf("Cannot get sum: %v", err)
 	}
