@@ -21,7 +21,7 @@ var recordAddCmd = &cobra.Command{
 }
 
 var flags struct {
-    datestr string 
+	datestr string
 }
 
 func parseRecordAddArgs(cmd *cobra.Command, args []string) {
@@ -38,29 +38,29 @@ func parseRecordAddArgs(cmd *cobra.Command, args []string) {
 		display.Errorf("Category %v not found", recCategory)
 	}
 
-    recDate := chrono.Today()
-    if flags.datestr != "today" {
-        date, err := chrono.ParseDate(flags.datestr)
-        if err != nil {
-            display.Error(err.Error()) 
-        }
-        recDate = date 
-    }
-    
-    newRec := record.Record{
-        Amount: recAmount,
-        Name: recName,
-        Category: recCategory,
-        Date: recDate,
-    }
-    
-    debug.Tracef("Adding %v", newRec)
+	recDate := chrono.Today()
+	if flags.datestr != "today" {
+		date, err := chrono.ParseDate(flags.datestr)
+		if err != nil {
+			display.Error(err.Error())
+		}
+		recDate = date
+	}
+
+	newRec := record.Record{
+		Amount:   recAmount,
+		Name:     recName,
+		Category: recCategory,
+		Date:     recDate,
+	}
+
+	debug.Tracef("Adding %v", newRec)
 	err = db.InsertRec(newRec)
 	util.CheckErrorf(err, "Error inserting record")
 }
 
 func init() {
-    recordAddCmd.Flags().StringVarP(&flags.datestr, "date", "d", "today",
-        "Specify date of the record")
+	recordAddCmd.Flags().StringVarP(&flags.datestr, "date", "d", "today",
+		"Specify date of the record")
 	recordCmd.AddCommand(recordAddCmd)
 }

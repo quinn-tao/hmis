@@ -133,19 +133,19 @@ func GetRecords(options ...RecordSearchOption) ([]record.Record, error) {
 
 	var selectors []string
 	if specified(opt.fromDate) {
-		selectors = append(selectors, fmt.Sprintf("recordDate >= %v", opt.fromDate))
+		selectors = append(selectors, fmt.Sprintf("recordDate >= '%v'", opt.fromDate))
 	}
 
 	if specified(opt.toDate) {
-		selectors = append(selectors, fmt.Sprintf("recordDate <= %v", opt.toDate))
+		selectors = append(selectors, fmt.Sprintf("recordDate <= '%v'", opt.toDate))
 	}
 
 	if specified(opt.categroy) {
-		selectors = append(selectors, fmt.Sprintf("category = %v", opt.categroy))
+		selectors = append(selectors, fmt.Sprintf("category = '%v'", opt.categroy))
 	}
 
 	if specified(opt.categroy) {
-		selectors = append(selectors, fmt.Sprintf("name like %v", opt.nameMatch))
+		selectors = append(selectors, fmt.Sprintf("name like '%v'", opt.nameMatch))
 	}
 
 	stmt := SearchStmt{
