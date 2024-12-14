@@ -1,12 +1,12 @@
 package profile
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path"
 	"strings"
-    "errors"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/quinn-tao/hmis/v1/config"
@@ -17,7 +17,7 @@ import (
 )
 
 var (
-    ErrNoProfileLoaded = errors.New("No current profile loaded")
+	ErrNoProfileLoaded = errors.New("No current profile loaded")
 )
 
 type Profile struct {
@@ -33,14 +33,14 @@ type Profile struct {
 // The current loaded profile
 var currProfile *Profile
 
-// Profile APIs 
+// Profile APIs
 // ===========================================================================
 
-func GetCurrentProfile() (*Profile, error){
-    if currProfile == nil {
-        return nil, ErrNoProfileLoaded
-    }
-    return currProfile, nil
+func GetCurrentProfile() (*Profile, error) {
+	if currProfile == nil {
+		return nil, ErrNoProfileLoaded
+	}
+	return currProfile, nil
 }
 
 // Load current profile

@@ -72,4 +72,3 @@ func NewDateRangeFromString(fromDateToken string,
 	debug.Tracef("Date Range Parsed %v", dateRange)
 	return dateRange, nil
 }
-

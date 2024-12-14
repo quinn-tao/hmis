@@ -15,7 +15,7 @@ import (
 type RawAmountVal int64
 
 const (
-    InvalidRawAmountVal = RawAmountVal(0)
+	InvalidRawAmountVal = RawAmountVal(0)
 )
 
 var (

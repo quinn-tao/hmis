@@ -68,7 +68,7 @@ type Category struct {
 	Sub    map[string]*Category
 }
 
-// Category APIs 
+// Category APIs
 // ================================================================================
 
 // Insert the category into category tree
@@ -142,37 +142,38 @@ func (c *Category) FindCategoryRecursive(name string) (retc *Category, exists bo
 	return nil, false
 }
 
-type CategorySelector func(* Category) bool 
-var CategorySelectAll CategorySelector = func(c *Category) bool {return true}
+type CategorySelector func(*Category) bool
 
-type CategoryAccumulator func(* Category, interface{}) interface{} 
+var CategorySelectAll CategorySelector = func(c *Category) bool { return true }
 
-// Visit Category Tree and apply selector and/or accumulator 
-// Selected categories and Accumulated Values are returned 
-// If selector is nil, then all Categories are selected 
+type CategoryAccumulator func(*Category, interface{}) interface{}
+
+// Visit Category Tree and apply selector and/or accumulator
+// Selected categories and Accumulated Values are returned
+// If selector is nil, then all Categories are selected
 // If accumulator is nil, then nil will be returned as accumulated value
-func (c *Category) Visit(selector CategorySelector, 
-    accumulator CategoryAccumulator, currAcc interface{}) ([]*Category, interface{}) {
-    var sel []*Category
-    
-    if selector == nil || selector(c) {
-        sel = []*Category{c}
-    }
-    
-    acc := accumulator(c, currAcc)
-    for _, sub := range c.Sub {
-        subSel, subAcc := sub.Visit(selector, accumulator, acc)
-        sel = append(sel, subSel...)
-        acc = subAcc
-    }
+func (c *Category) Visit(selector CategorySelector,
+	accumulator CategoryAccumulator, currAcc interface{}) ([]*Category, interface{}) {
+	var sel []*Category
 
-    debug.Tracef("visiting %v acc %v", c, acc)
-    
-    return sel, acc
+	if selector == nil || selector(c) {
+		sel = []*Category{c}
+	}
+
+	acc := accumulator(c, currAcc)
+	for _, sub := range c.Sub {
+		subSel, subAcc := sub.Visit(selector, accumulator, acc)
+		sel = append(sel, subSel...)
+		acc = subAcc
+	}
+
+	debug.Tracef("visiting %v acc %v", c, acc)
+
+	return sel, acc
 }
 
-// Utilities 
-// ================================================================================
+// Utilities
+// ============================================================================
 
 func (this *Category) Equals(other *Category) bool {
 	if this.Name != other.Name {
@@ -221,7 +222,6 @@ func (c *Category) MarshalYAML() (interface{}, error) {
 }
 
 // Marshalling a category into yaml produces one of:
-//
 //	a string, represents a leaf node in the category tree, or
 //	a mapping from name of this category to an array of children yaml values
 func (c *Category) marshalYAML() (interface{}, error) {
